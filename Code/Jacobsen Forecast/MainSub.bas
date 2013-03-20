@@ -14,6 +14,7 @@ Sub Main()
     'On failure clear all data and
     'stop execution
     On Error GoTo ErrHandler
+    ImportMaster
     ImportGaps
     ImportPdc
     ImportMfg
