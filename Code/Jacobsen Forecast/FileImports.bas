@@ -138,3 +138,30 @@ Public Sub ImportGaps()
         End With
     End If
 End Sub
+
+Sub ImportMaster()
+    Dim sPath As String
+    Dim Wkbk As Workbook
+
+    sPath = "\\br3615gaps\gaps\Billy Mac-Master Lists\Jacobsen-Textron Master File " & Format(Date, "yyyy") & ".xls"
+    ThisWorkbook.Sheets("Master").Cells.Delete
+    Application.DisplayAlerts = False
+    Application.AskToUpdateLinks = False
+    Workbooks.Open FileName:=sPath
+    ActiveSheet.AutoFilterMode = False
+    Set Wkbk = ActiveWorkbook
+    ActiveSheet.UsedRange.Copy
+    ThisWorkbook.Activate
+    Sheets("Master").Range("A1").PasteSpecial Paste:=xlPasteValues, _
+                                              Operation:=xlNone, _
+                                              SkipBlanks:=False, _
+                                              Transpose:=False
+    Application.CutCopyMode = False
+    Wkbk.Close
+    Application.DisplayAlerts = True
+    Application.AskToUpdateLinks = True
+    Sheets("Macro").Select
+End Sub
+
+
+
