@@ -404,27 +404,6 @@ Sub BuildFcst()
           Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlLeft
     Cells.EntireColumn.AutoFit
 
-    'Color bulk item SIMs
-    Set rRange = Range(Cells(1, 1), Cells(ActiveSheet.UsedRange.Rows.Count, 1))
-    aArray = rRange
-    For i = 1 To UBound(aArray, 1)
-        If aArray(i, 1) = "99420491137" Or aArray(i, 1) = "40309495373" Then
-            rRange(i, 1).Interior.Color = "10284031"
-            rRange(i, 2).Interior.Color = "10284031"
-            rRange(i, 3).Interior.Color = "10284031"
-        End If
-        If aArray(i, 1) = "99923698006" Or aArray(i, 1) = "78420420014" Then
-            rRange(i, 1).Interior.Color = "13561798"
-            rRange(i, 2).Interior.Color = "13561798"
-            rRange(i, 3).Interior.Color = "13561798"
-        End If
-        If aArray(i, 1) = "99923698005" Or aArray(i, 1) = "78923694616" Then
-            rRange(i, 1).Interior.Color = "14336204"
-            rRange(i, 2).Interior.Color = "14336204"
-            rRange(i, 3).Interior.Color = "14336204"
-        End If
-    Next i
-
     Columns("G:G").Insert
     Range("G1").Value = "Net Stock"
     Range("G2").Formula = "=SUM(D2,F2)"
@@ -433,11 +412,25 @@ Sub BuildFcst()
         .Value = .Value
     End With
 
+    'Color bulk item SIMs
+    Set rRange = Range(Cells(1, 1), Cells(ActiveSheet.UsedRange.Rows.Count, 1))
+    aArray = rRange
+    For i = 1 To UBound(aArray, 1)
+        If aArray(i, 1) = "99420491137" Or aArray(i, 1) = "40309495373" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "10284031"
+        End If
+        If aArray(i, 1) = "99923698006" Or aArray(i, 1) = "78420420014" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "13561798"
+        End If
+        If aArray(i, 1) = "99923698005" Or aArray(i, 1) = "78923694616" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14336204"
+        End If
+    Next i
+
     With Range("Q1:AC1")
         .Value = .Value
     End With
     Range("Q1:AC1").NumberFormat = "mmm-yyyy"
-
 
 End Sub
 
@@ -447,6 +440,14 @@ End Sub
 ' Desc  : Sorts the finished forecast by color to group bulk SIMs
 '---------------------------------------------------------------------------------------
 Sub SortByColor()
+    Dim vCell As Variant
+    Dim TotalRows As Long
+    Dim PrevSheet As Worksheet
+
+    Set PrevSheet = ActiveSheet
+    Sheets("Forecast").Select
+    TotalRows = ActiveSheet.UsedRange.Rows.Count
+
     With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort.SortFields
         .Clear
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(255, 235, 156)
@@ -461,6 +462,15 @@ Sub SortByColor()
         .SortMethod = xlPinYin
         .Apply
     End With
+
+    For Each vCell In Range(Cells(2, 1), Cells(TotalRows, 1))
+        If vCell.Value = "99923698005" Or vCell.Value = "99923698006" Then
+            Rows(vCell.Row).Cut
+            Rows(vCell.Offset(-1).Row).Insert Shift:=xlDown
+        End If
+    Next
+
+    PrevSheet.Select
 End Sub
 
 '---------------------------------------------------------------------------------------
