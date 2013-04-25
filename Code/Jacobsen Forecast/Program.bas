@@ -250,7 +250,8 @@ Sub BuildFcst()
     Dim rRange As Range
     Dim sCol1 As String
     Dim sCol2 As String
-
+    Dim TotalRows As Long
+    
     Worksheets("Combined").Select
     iCombinedCols = ActiveSheet.UsedRange.Columns.Count
     iCombinedRows = ActiveSheet.UsedRange.Rows.Count
@@ -261,10 +262,9 @@ Sub BuildFcst()
 
     'Set column headers & number formats
     Worksheets("Forecast").Select
+    TotalRows = ActiveSheet.UsedRange.Rows.Count
     Range("A1:C1") = Array("SIM", "Part", "Description")
     Range("L1").Value = "Stock Visualization"
-    'Range("I:I").NumberFormat = "$#,##0.00"
-
 
 
     'Add data
@@ -279,14 +279,16 @@ Sub BuildFcst()
     Range("J2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AI,32,FALSE),"""")"
     Range("K2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AL,35,FALSE),"""")"
 
-    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, 4))
-    Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(ActiveSheet.UsedRange.Rows.Count, 5))
-    Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(ActiveSheet.UsedRange.Rows.Count, 6))
-    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(ActiveSheet.UsedRange.Rows.Count, 7))
-    Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(ActiveSheet.UsedRange.Rows.Count, 8))
-    Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(ActiveSheet.UsedRange.Rows.Count, 9))
-    Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(ActiveSheet.UsedRange.Rows.Count, 10))
-    Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11))
+    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(TotalRows, 4))
+    Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(TotalRows, 5))
+    Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(TotalRows, 6))
+    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(TotalRows, 7))
+    Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(TotalRows, 8))
+    Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(TotalRows, 9))
+    Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(TotalRows, 10))
+    'Supplier
+    Range(Cells(2, 11), Cells(TotalRows, 11)).NumberFormat = "@"
+    Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(TotalRows, 11))
 
     ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
     iRows = ActiveSheet.UsedRange.Rows.Count
@@ -303,17 +305,12 @@ Sub BuildFcst()
     Range("M2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:F,3,FALSE),0)-VLOOKUP(B2,Combined!" & sCol1 & ":" & sCol2 & ",3,FALSE)"
     Cells(2, 13).AutoFill Destination:=Range(Cells(2, 13), Cells(iRows, 13))
 
-
-
     For i = 5 To iCombinedCols
         Cells(1, i + 9).Value = Worksheets("Combined").Cells(i).Value
         Cells(2, i + 9).Formula = _
         "=" & Cells(2, i + 8).Address(False, False) & "-VLOOKUP(B2,Combined!" & sCol1 & ":" & sCol2 & "," & i - 1 & ",FALSE)"
         Cells(2, i + 9).AutoFill Destination:=Range(Cells(2, i + 9), Cells(iRows, i + 9))
     Next i
-
-
-
 
     iCols = ActiveSheet.UsedRange.Columns.Count + 1
     Cells(1, iCols).Value = "Notes"
