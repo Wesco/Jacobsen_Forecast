@@ -179,8 +179,8 @@ Sub CombineFcst()
     Next i
 
     'Consolidate the data by creating a pivot table
-    Columns("P:Z").Delete
-
+    Columns("O:Z").Delete
+    
     ActiveWorkbook.PivotCaches.Create( _
             SourceType:=xlDatabase, _
             SourceData:=ActiveSheet.UsedRange, _
