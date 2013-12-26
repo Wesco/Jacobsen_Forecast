@@ -33,6 +33,7 @@ Sub Main()
     ExportFcst      'Save the forecast to the network
     MsgBox "Complete!"
     Email SendTo:="JBarnhill@wesco.com", _
+          CC:="ABridges@wesco.com", _
           Subject:="Jacobsen Forecast", _
           Body:="""\\br3615gaps\gaps\Jacobsen-Textron\" & Format(Date, "yyyy") & " Alerts\Jacobsen Slink " & Format(Date, "m-dd-yy") & ".xlsx"""
     Application.DisplayAlerts = True
