@@ -42,14 +42,30 @@ Sub Main()
 
     'On import error clean all sheets and stop execution
 ErrHandler:
-    ThisWorkbook.Worksheets("Gaps").Cells.Delete
-    ThisWorkbook.Worksheets("Temp").Cells.Delete
-    ThisWorkbook.Worksheets("Forecast").Cells.Delete
-    ThisWorkbook.Worksheets("Combined").Cells.Delete
-    ThisWorkbook.Worksheets("Pdc").Cells.Delete
-    ThisWorkbook.Worksheets("Mfg").Cells.Delete
+    Clean
     Application.DisplayAlerts = True
     Application.ScreenUpdating = True
     Exit Sub
 
+End Sub
+
+Sub Clean()
+    Dim PrevDispAlert As Boolean
+    Dim s As Worksheet
+
+    PrevDispAlert = Application.DisplayAlerts
+    Application.DisplayAlerts = False
+    
+    For Each s In ThisWorkbook.Sheets
+        If s.Name <> "Macro" Then
+            s.Select
+            s.Cells.Delete
+            s.Range("A1").Select
+        End If
+    Next
+    
+    Application.DisplayAlerts = PrevDispAlert
+    
+    Sheets("Macro").Select
+    Range("C7").Select
 End Sub

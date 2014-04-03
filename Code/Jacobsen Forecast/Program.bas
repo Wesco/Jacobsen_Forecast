@@ -122,31 +122,36 @@ Sub RestructFcst(ByVal WS As Worksheet)
     'Pull in the part description from gaps
     'Write the formula as a value
     'Set the part forecast to 0 for each month
-    Cells(ActiveSheet.UsedRange.Rows.Count + 1, 1).Value = "40309495373"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Formula = _
-    "=IFERROR(VLOOKUP(" & Cells(ActiveSheet.UsedRange.Rows.Count, 1).Address(False, False) & ", Gaps!D:E, 2, FALSE),"""")"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value = Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value
-    Range(Cells(ActiveSheet.UsedRange.Rows.Count, 3), _
-          Cells(ActiveSheet.UsedRange.Rows.Count, _
-                ActiveSheet.UsedRange.Columns.Count)).Value = "0"
-
-    Cells(ActiveSheet.UsedRange.Rows.Count + 1, 1).Value = "78923694616"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Formula = _
-    "=IFERROR(VLOOKUP(" & Cells(ActiveSheet.UsedRange.Rows.Count, 1).Address(False, False) & ", Gaps!D:E, 2, FALSE),"""")"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value = Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value
-    Range(Cells(ActiveSheet.UsedRange.Rows.Count, 3), _
-          Cells(ActiveSheet.UsedRange.Rows.Count, _
-                ActiveSheet.UsedRange.Columns.Count)).Value = "0"
-
-    Cells(ActiveSheet.UsedRange.Rows.Count + 1, 1).Value = "78420420014"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Formula = _
-    "=IFERROR(VLOOKUP(" & Cells(ActiveSheet.UsedRange.Rows.Count, 1).Address(False, False) & ", Gaps!D:E, 2, FALSE),"""")"
-    Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value = Cells(ActiveSheet.UsedRange.Rows.Count, 2).Value
-    Range(Cells(ActiveSheet.UsedRange.Rows.Count, 3), _
-          Cells(ActiveSheet.UsedRange.Rows.Count, _
-                ActiveSheet.UsedRange.Columns.Count)).Value = "0"
+    AddBulkSIM "40309495373"
+    AddBulkSIM "78923694616"
+    AddBulkSIM "78420420014"
+    AddBulkSIM "78420420179"
+    AddBulkSIM "78923693664"
+    AddBulkSIM "78923693663"
+    AddBulkSIM "63285098955"
+    AddBulkSIM "63285098954"
+    AddBulkSIM "78862198856"
+    AddBulkSIM "78923693770"
+    AddBulkSIM "78923693769"
+    AddBulkSIM "78420498874"
 End Sub
 
+Private Sub AddBulkSIM(ItemNum As String)
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row + 1
+
+    'Add SIM
+    Cells(TotalRows, 1).Value = ItemNum
+
+    'Lookup description
+    Cells(TotalRows, 2).Formula = "=IFERROR(VLOOKUP(" & Cells(TotalRows, 1).Address(False, False) & ", Gaps!D:E, 2, FALSE),"""")"
+    Cells(TotalRows, 2).Value = Cells(TotalRows, 2).Value
+
+    Range(Cells(TotalRows, 3), Cells(TotalRows, TotalCols)).Value = 0
+End Sub
 
 '---------------------------------------------------------------------------------------
 ' Proc  : Sub CombineFcst
@@ -180,7 +185,7 @@ Sub CombineFcst()
 
     'Consolidate the data by creating a pivot table
     Columns("O:Z").Delete
-    
+
     ActiveWorkbook.PivotCaches.Create( _
             SourceType:=xlDatabase, _
             SourceData:=ActiveSheet.UsedRange, _
@@ -251,7 +256,7 @@ Sub BuildFcst()
     Dim sCol1 As String
     Dim sCol2 As String
     Dim TotalRows As Long
-    
+
     Worksheets("Combined").Select
     iCombinedCols = ActiveSheet.UsedRange.Columns.Count
     iCombinedRows = ActiveSheet.UsedRange.Rows.Count
@@ -415,20 +420,34 @@ Sub BuildFcst()
     For i = 1 To UBound(aArray, 1)
         If aArray(i, 1) = "99420491137" Or aArray(i, 1) = "40309495373" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "10284031"
-        End If
-        If aArray(i, 1) = "99923698006" Or aArray(i, 1) = "78420420014" Then
+
+        ElseIf aArray(i, 1) = "99923698006" Or aArray(i, 1) = "78420420014" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "13561798"
-        End If
-        If aArray(i, 1) = "99923698005" Or aArray(i, 1) = "78923694616" Then
+
+        ElseIf aArray(i, 1) = "99923698005" Or aArray(i, 1) = "78923694616" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14336204"
+
+        ElseIf aArray(i, 1) = "99420498967" Or aArray(i, 1) = "78420420179" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "11851260"
+
+        ElseIf aArray(i, 1) = "78923693663" Or aArray(i, 1) = "78923693664" Or aArray(i, 1) = "99923697662" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "12040422"
+
+        ElseIf aArray(i, 1) = "63285098954" Or aArray(i, 1) = "63285098955" Or aArray(i, 1) = "99420498972" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "15261367"
+
+        ElseIf aArray(i, 1) = "99923697717" Or aArray(i, 1) = "78862198856" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "9944516"
+
+        ElseIf aArray(i, 1) = "99923697691" Or aArray(i, 1) = "78923693770" Or aArray(i, 1) = "78923693769" Or aArray(i, 1) = "78420498874" Then
+            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14994616"
         End If
-    Next i
+    Next
 
     With Range("Q1:AC1")
         .Value = .Value
     End With
     Range("Q1:AC1").NumberFormat = "mmm-yyyy"
-
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -450,6 +469,10 @@ Sub SortByColor()
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(255, 235, 156)
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(204, 192, 218)
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(198, 239, 206)
+        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(183, 222, 232)
+        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(230, 184, 183)
+        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(252, 213, 180)
+        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(196, 189, 151)
         .Add Key:=Range("Table1[LT/Days]"), SortOn:=xlSortOnValues, Order:=xlDescending, DataOption:=xlSortNormal
     End With
     With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort
@@ -461,7 +484,8 @@ Sub SortByColor()
     End With
 
     For Each vCell In Range(Cells(2, 1), Cells(TotalRows, 1))
-        If vCell.Value = "99923698005" Or vCell.Value = "99923698006" Then
+        If vCell.Value = "99923698005" Or vCell.Value = "99923698006" Or _
+           vCell.Value = "99923697662" Or vCell.Value = "99420498967" Then
             Rows(vCell.Row).Cut
             Rows(vCell.Offset(-1).Row).Insert Shift:=xlDown
         End If
