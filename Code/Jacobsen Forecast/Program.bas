@@ -166,15 +166,12 @@ Sub CombineFcst()
 
     'Moves both part forecasts onto one sheet
     Worksheets("Pdc").Select
-    iRows = ActiveSheet.UsedRange.Rows.Count
-    iCols = ActiveSheet.UsedRange.Columns.Count
-    ActiveSheet.UsedRange.Copy Destination:=Worksheets("Temp").Range("A1")
+    iRows = Rows(Rows.Count).End(xlUp).Row
+    iCols = Columns(Columns.Count).End(xlToLeft).Column
+    Range(Cells(1, 1), Cells(iRows, iCols)).Copy Destination:=Worksheets("Temp").Range("A1")
 
     Worksheets("Mfg").Select
-    With ActiveSheet.UsedRange
-        Range(Cells(2, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Copy _
-                Destination:=ThisWorkbook.Worksheets("Temp").Cells(iRows + 1, 1)
-    End With
+    Range(Cells(2, 1), Cells(Rows(Rows.Count).End(xlUp).Row, Columns(Columns.Count).End(xlToLeft).Column)).Copy Destination:=Sheets("Temp").Cells(iRows + 1, 1)
 
     Worksheets("Temp").Select
     ReDim sColHeaders(1 To 1, 1 To iCols)
@@ -219,24 +216,21 @@ Sub CombineFcst()
     Next i
     On Error GoTo 0
 
+    iRows = Rows(Rows.Count).End(xlUp).Row
+    iCols = Columns(Columns.Count).End(xlToLeft).Column
+
     'Store the pivot table as values
-    Cells.Select
-    Selection.Copy
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    Range(Cells(1, 1), Cells(iRows, iCols)).Copy
+    Range("A1").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
     Application.CutCopyMode = False
-    Rows(ActiveSheet.UsedRange.Rows.Count).Delete Shift:=xlUp
+    Rows(iRows).Delete Shift:=xlUp
     Range(Cells(1, 1), Cells(1, iCols)) = sColHeaders
 
     'Match part numbers to SIM numbers
     Columns(1).Insert Shift:=xlToRight
     Range("A1").Value = "SIM"
-    Range("A2").Formula = "=IFERROR(IF(VLOOKUP(B2,Master!A:B,2,FALSE)=0, """", VLOOKUP(B2,Master!A:B,2,FALSE)), """")"
-    Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(ActiveSheet.UsedRange.Rows.Count, 1))
-
-    'store SIMs as values
-    With Range(Cells(2, 1), Cells(ActiveSheet.UsedRange.Rows.Count, 1))
-        .Value = .Value
-    End With
+    Range("A2:A" & iRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Master!A:B,2,FALSE)=0, """", VLOOKUP(B2,Master!A:B,2,FALSE)), """")"
+    Range("A2:A" & iRows).Value = Range("A2:A" & iRows).Value
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -415,38 +409,36 @@ Sub BuildFcst()
     End With
 
     'Color bulk item SIMs
-    Set rRange = Range(Cells(1, 1), Cells(ActiveSheet.UsedRange.Rows.Count, 1))
-    aArray = rRange
+    Set rRange = Range(Cells(1, 1), Cells(Rows(Rows.Count).End(xlUp).Row, 1))
+    aArray = Range(Cells(1, 2), Cells(Rows(Rows.Count).End(xlUp).Row, 2))
     For i = 1 To UBound(aArray, 1)
-        If aArray(i, 1) = "99420491137" Or aArray(i, 1) = "40309495373" Then
+        If aArray(i, 1) = "4193360" Or aArray(i, 1) = "40309495373" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "10284031"
 
-        ElseIf aArray(i, 1) = "99923698006" Or aArray(i, 1) = "78420420014" Then
+        ElseIf aArray(i, 1) = "3005286" Or aArray(i, 1) = "78420420014" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "13561798"
 
-        ElseIf aArray(i, 1) = "99923698005" Or aArray(i, 1) = "78923694616" Then
+        ElseIf aArray(i, 1) = "4265710" Or aArray(i, 1) = "78923694616" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14336204"
 
-        ElseIf aArray(i, 1) = "99420498967" Or aArray(i, 1) = "78420420179" Then
+        ElseIf aArray(i, 1) = "3010331" Or aArray(i, 1) = "78420420179" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "11851260"
 
-        ElseIf aArray(i, 1) = "78923693663" Or aArray(i, 1) = "78923693664" Or aArray(i, 1) = "99923697662" Then
+        ElseIf aArray(i, 1) = "4187221" Or aArray(i, 1) = "78923693663" Or aArray(i, 1) = "78923693664" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "12040422"
 
-        ElseIf aArray(i, 1) = "63285098954" Or aArray(i, 1) = "63285098955" Or aArray(i, 1) = "99420498972" Then
+        ElseIf aArray(i, 1) = "4283654" Or aArray(i, 1) = "63285098954" Or aArray(i, 1) = "63285098955" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "15261367"
 
-        ElseIf aArray(i, 1) = "99923697717" Or aArray(i, 1) = "78862198856" Then
+        ElseIf aArray(i, 1) = "4292871" Or aArray(i, 1) = "78862198856" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "9944516"
 
-        ElseIf aArray(i, 1) = "99923697691" Or aArray(i, 1) = "78923693770" Or aArray(i, 1) = "78923693769" Or aArray(i, 1) = "78420498874" Then
+        ElseIf aArray(i, 1) = "4283892" Or aArray(i, 1) = "78923693770" Or aArray(i, 1) = "78923693769" Or aArray(i, 1) = "78420498874" Then
             Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14994616"
         End If
     Next
 
-    With Range("Q1:AC1")
-        .Value = .Value
-    End With
+    Range("Q1:AC1").Value = Range("Q1:AC1").Value
     Range("Q1:AC1").NumberFormat = "mmm-yyyy"
 End Sub
 
@@ -473,6 +465,7 @@ Sub SortByColor()
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(230, 184, 183)
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(252, 213, 180)
         .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(196, 189, 151)
+        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(184, 204, 228)
         .Add Key:=Range("Table1[LT/Days]"), SortOn:=xlSortOnValues, Order:=xlDescending, DataOption:=xlSortNormal
     End With
     With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort
@@ -492,6 +485,20 @@ Sub SortByColor()
     Next
 
     PrevSheet.Select
+End Sub
+
+Private Sub ColorToRGB()
+    Dim HexColor As String
+    Dim Red As String
+    Dim Green As String
+    Dim Blue As String
+
+    HexColor = Hex(ActiveCell.Interior.Color)
+    HexColor = Replace(HexColor, "#", "")
+    Red = Val("&H" & Mid(HexColor, 5, 2))
+    Green = Val("&H" & Mid(HexColor, 3, 2))
+    Blue = Val("&H" & Mid(HexColor, 1, 2))
+    Debug.Print "RGB(" & Red & ", " & Green & ", " & Blue & ")"
 End Sub
 
 '---------------------------------------------------------------------------------------
