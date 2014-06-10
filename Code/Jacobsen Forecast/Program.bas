@@ -548,7 +548,6 @@ Sub AddNotes()
             Range("Q1:AC1").Value = Range("Q1:AC1").Value
             Exit For
         End If
-        i = i + 1
     Next
 
     Columns("G:G").Delete
