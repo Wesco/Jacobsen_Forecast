@@ -68,7 +68,7 @@ Public Sub ImportGaps()
     sPath = "\\BR3615GAPS\GAPS\3615 GAPS DOWNLOAD\" & Format(Date, "yyyy") & "\"
 
     For i = 0 To 10
-        sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
+        sName = "3615 " & Format(Date - i, "yyyy-mm-dd") & ".csv"
         If FileExists(sPath & sName) Then
             bFileFound = True
             Exit For
