@@ -16,8 +16,12 @@ Sub Main()
     On Error GoTo ErrHandler
     ImportMaster
     ImportGaps SimsAsText:=False
-    ImportPdc
-    ImportMfg
+    ImportForecast FileFilter:="pdc (*.csv), pdc.csv", _
+                   Title:="Open the Pdc forecast", _
+                   Destination:=Sheets("Pdc").Range("A1")
+    ImportForecast FileFilter:="mfg (*.csv), mfg.csv", _
+                   Title:="Open the Mfg forecast", _
+                   Destination:=Sheets("Mfg").Range("A1")
     On Error GoTo 0
 
     'If all data imports are successful
@@ -55,7 +59,7 @@ Sub Clean()
 
     PrevDispAlert = Application.DisplayAlerts
     Application.DisplayAlerts = False
-    
+
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Macro" Then
             s.Select
@@ -63,9 +67,9 @@ Sub Clean()
             s.Range("A1").Select
         End If
     Next
-    
+
     Application.DisplayAlerts = PrevDispAlert
-    
+
     Sheets("Macro").Select
     Range("C7").Select
 End Sub

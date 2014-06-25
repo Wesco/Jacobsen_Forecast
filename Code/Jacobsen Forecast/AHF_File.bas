@@ -2,11 +2,11 @@ Attribute VB_Name = "AHF_File"
 Option Explicit
 
 '---------------------------------------------------------------------------------------
-' Proc  : Function FileExists
-' Date  : 10/10/2012
-' Type  : Boolean
-' Desc  : Checks if a file exists and can be read
-' Ex    : FileExists "C:\autoexec.bat"
+' Proc : Function FileExists
+' Date : 10/10/2012
+' Type : Boolean
+' Desc : Checks if a file exists and can be read
+' Ex   : FileExists "C:\autoexec.bat"
 '---------------------------------------------------------------------------------------
 Function FileExists(ByVal FilePath As String) As Boolean
     Dim fso As Object
@@ -34,11 +34,11 @@ File_Error:
 End Function
 
 '---------------------------------------------------------------------------------------
-' Proc  : Function FolderExists
-' Date  : 10/10/2012
-' Type  : Boolean
-' Desc  : Checks if a folder exists
-' Ex    : FolderExists "C:\Program Files\"
+' Proc : Function FolderExists
+' Date : 10/10/2012
+' Type : Boolean
+' Desc : Checks if a folder exists
+' Ex   : FolderExists "C:\Program Files\"
 '---------------------------------------------------------------------------------------
 Function FolderExists(ByVal sPath As String) As Boolean
     'Add trailing backslash
@@ -54,10 +54,10 @@ File_Error:
 End Function
 
 '---------------------------------------------------------------------------------------
-' Proc  : Sub RecMkDir
-' Date  : 10/10/2012
-' Desc  : Creates an entire directory tree
-' Ex    : RecMkDir "C:\Dir1\Dir2\Dir3\"
+' Proc : Sub RecMkDir
+' Date : 10/10/2012
+' Desc : Creates an entire directory tree
+' Ex   : RecMkDir "C:\Dir1\Dir2\Dir3\"
 '---------------------------------------------------------------------------------------
 Sub RecMkDir(ByVal sPath As String)
     Dim sDirArray() As String   'Folder names
@@ -109,4 +109,5 @@ End Sub
 Sub DeleteFile(FileName As String)
     On Error Resume Next
     Kill FileName
+    On Error GoTo 0
 End Sub

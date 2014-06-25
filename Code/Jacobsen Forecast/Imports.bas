@@ -2,42 +2,24 @@ Attribute VB_Name = "Imports"
 Option Explicit
 
 '---------------------------------------------------------------------------------------
-' Proc  : Sub ImportPdc
-' Date  : 10/10/2012
-' Desc  : Prompts user for pdc forecast and copies it to this workbook
+' Proc : Sub ImportForecast
+' Date : 6/25/2014
+' Desc : Prompts user for forecast, imports it, then deletes the original file
 '---------------------------------------------------------------------------------------
-Public Sub ImportPdc()
-    Dim sPath As String
-    sPath = Application.GetOpenFilename("pdc (*.csv), pdc.csv", Title:="Open the Pdc forecast")
+Sub ImportForecast(FileFilter As String, Title As String, Destination As Range)
+    Dim Path As String
 
-    If sPath <> "False" Then
-        Workbooks.Open sPath
-        ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Pdc").Range("A1")
+    Path = Application.GetOpenFilename(FileFilter, Title:=Title)
+
+    If Path <> "False" Then
+        Workbooks.Open Path
+        ActiveSheet.UsedRange.Copy Destination:=Destination
+        ActiveWorkbook.Saved = True
         ActiveWorkbook.Close
-        Kill sPath
-    Else
-        MsgBox Prompt:="File import canceled." & vbCrLf & Err.Description, Title:="User Aborted Operation"
-        Err.Raise 95
-    End If
-End Sub
 
-'---------------------------------------------------------------------------------------
-' Proc  : Sub ImportMfg
-' Date  : 10/10/2012
-' Desc  : Prompts user for mfg forecast and copies it to this workbook
-'---------------------------------------------------------------------------------------
-Public Sub ImportMfg()
-    Dim sPath As String
-    sPath = Application.GetOpenFilename("mfg (*.csv), mfg.csv", Title:="Open the Mfg forecast")
-
-    If sPath <> "False" Then
-        Workbooks.Open sPath
-        ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Mfg").Range("A1")
-        ActiveWorkbook.Close
-        Kill sPath
+        DeleteFile Path
     Else
-        MsgBox Prompt:="File import canceled." & vbCrLf & Err.Description, Title:="User Aborted Operation"
-        Err.Raise 95
+        Err.Raise Errors.USER_INTERRUPT, "ImportForecast", "User Aborted Import"
     End If
 End Sub
 
