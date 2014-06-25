@@ -21,7 +21,6 @@ Public Sub ImportPdc()
     End If
 End Sub
 
-
 '---------------------------------------------------------------------------------------
 ' Proc  : Sub ImportMfg
 ' Date  : 10/10/2012
@@ -42,6 +41,11 @@ Public Sub ImportMfg()
     End If
 End Sub
 
+'---------------------------------------------------------------------------------------
+' Proc : ImportMaster
+' Date : 6/25/2014
+' Desc : Imports the Jacobsen master list
+'---------------------------------------------------------------------------------------
 Sub ImportMaster()
     Dim Path As String
     Dim File As String
