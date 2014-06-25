@@ -28,7 +28,6 @@ Sub Main()
                    Destination:=Sheets("Mfg").Range("A1")
     On Error GoTo 0
 
-    'If all data imports are successful
     'Restructure the data into a useable
     'format for processing
     RestructFcst Worksheets("Pdc")
@@ -49,7 +48,10 @@ Sub Main()
     Exit Sub
 
 Main_Error:
-    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure Main of Module Program"
+    If Err.Number <> 18 Then
+        MsgBox Prompt:="Error " & Err.Number & " (" & Err.Description & ") occurred in " & Err.Source & ".", _
+               Title:="Oops!"
+    End If
     Clean
 End Sub
 
