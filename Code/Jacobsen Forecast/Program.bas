@@ -15,7 +15,7 @@ Sub Main()
     'stop execution
     On Error GoTo ErrHandler
     ImportMaster
-    ImportGaps
+    ImportGaps SimsAsText:=False
     ImportPdc
     ImportMfg
     On Error GoTo 0
