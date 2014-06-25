@@ -16,9 +16,13 @@ Sub Main()
     On Error GoTo Main_Error
     ImportMaster
     ImportGaps SimsAsText:=False
+
+    'Import Pdc forecast
     ImportForecast FileFilter:="pdc (*.csv), pdc.csv", _
                    Title:="Open the Pdc forecast", _
                    Destination:=Sheets("Pdc").Range("A1")
+
+    'Import Mfg forecast
     ImportForecast FileFilter:="mfg (*.csv), mfg.csv", _
                    Title:="Open the Mfg forecast", _
                    Destination:=Sheets("Mfg").Range("A1")
