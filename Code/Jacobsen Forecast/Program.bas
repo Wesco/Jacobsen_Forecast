@@ -13,7 +13,7 @@ Sub Main()
     'Import external data sheets
     'On failure clear all data and
     'stop execution
-    On Error GoTo ErrHandler
+    On Error GoTo Main_Error
     ImportMaster
     ImportGaps SimsAsText:=False
     ImportForecast FileFilter:="pdc (*.csv), pdc.csv", _
@@ -44,13 +44,9 @@ Sub Main()
     Application.ScreenUpdating = True
     Exit Sub
 
-    'On import error clean all sheets and stop execution
-ErrHandler:
+Main_Error:
+    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure Main of Module Program"
     Clean
-    Application.DisplayAlerts = True
-    Application.ScreenUpdating = True
-    Exit Sub
-
 End Sub
 
 Sub Clean()
