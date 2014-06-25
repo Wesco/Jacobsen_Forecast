@@ -45,14 +45,14 @@ Sub ImportMaster()
     Application.AskToUpdateLinks = False
 
     If FileExists(Path & File) Then
-        Workbooks.Open FileName:=sPath
+        Workbooks.Open FileName:=Path & File
         Set MasterWkbk = ActiveWorkbook
 
         Sheets("Master").Select
 
         'Unhide data and remove filters
         ActiveSheet.AutoFilterMode = False
-        ActivSheet.Columns.Hidden = False
+        ActiveSheet.Columns.Hidden = False
         ActiveSheet.Rows.Hidden = False
 
         ActiveSheet.UsedRange.Copy
