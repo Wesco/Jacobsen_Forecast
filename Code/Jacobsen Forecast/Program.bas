@@ -31,8 +31,9 @@ Sub Main()
     
     FormatFcst Worksheets("Pdc")  'Format Pdc forecast
     FormatFcst Worksheets("Mfg")  'Format Mfg forecast
-    FormatKitBOM    'Remove unused data from kit BOM
     CombineFcst     'Consolidate data
+    
+    FormatKitBOM    'Remove unused data from kit BOM
     BuildFcst       'Process data and create a forecast
     SortByColor     'Sort the forecast by color
     AddNotes        'Add last weeks expedite notes
