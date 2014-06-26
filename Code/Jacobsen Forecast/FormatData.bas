@@ -33,7 +33,6 @@ Sub FormatFcst(Source As Worksheet)
 
     TotalRows = Rows(Rows.Count).End(xlUp).Row
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
-    ColHeaders = Range(Cells(1, 3), Cells(1, TotalCols)).Value
 
     'Setup the first cell for processing
     Set CurrCell = Cells(1, TotalCols)
