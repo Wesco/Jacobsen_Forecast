@@ -2,82 +2,66 @@ Attribute VB_Name = "MergeData"
 Option Explicit
 
 '---------------------------------------------------------------------------------------
-' Proc  : Sub CombineFcst
-' Date  : 10/11/2012
-' Desc  : Combines the pdc and mfg forecasts
+' Proc : MergeForecast
+' Date : 6/26/2014
+' Desc : Combines the pdc and mfg forecasts
 '---------------------------------------------------------------------------------------
-Sub CombineFcst()
-    Dim iRows As Long
-    Dim iCols As Integer
-    Dim sColHeaders() As String
-    Dim i As Integer
+Sub MergeForecast()
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+    Dim ColHeaders As Variant
+    Dim PivField As String
+    Dim i As Long
 
-    'Moves both part forecasts onto one sheet
-    Worksheets("Pdc").Select
-    iRows = Rows(Rows.Count).End(xlUp).Row
-    iCols = Columns(Columns.Count).End(xlToLeft).Column
-    Range(Cells(1, 1), Cells(iRows, iCols)).Copy Destination:=Worksheets("Temp").Range("A1")
+    'Check how many rows are on the Pdc forecast
+    Sheets("Pdc").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
-    Worksheets("Mfg").Select
-    Range(Cells(2, 1), Cells(Rows(Rows.Count).End(xlUp).Row, Columns(Columns.Count).End(xlToLeft).Column)).Copy Destination:=Sheets("Temp").Cells(iRows + 1, 1)
+    'Copy Mfg forecast to the Pdc sheet
+    Sheets("Mfg").Select
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("Pdc").Cells(TotalRows + 1, 1)
 
-    Worksheets("Temp").Select
-    ReDim sColHeaders(1 To 1, 1 To iCols)
+    Sheets("Pdc").Select
+    Rows(TotalRows + 1).Delete  'Remove Mfg headers
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    ColHeaders = Range(Cells(1, 1), Cells(1, TotalCols)).Value
 
-    For i = 1 To iCols
-        sColHeaders(1, i) = Cells(1, i).Text
-    Next i
+    'Create pivot table
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, _
+                                      SourceData:=Range(Cells(1, 1), Cells(TotalRows, TotalCols)), _
+                                      Version:=xlPivotTableVersion14).CreatePivotTable _
+                                      TableDestination:="Combined!R1C1", _
+                                      TableName:="PivotTable1", _
+                                      DefaultVersion:=xlPivotTableVersion14
+    Sheets("Combined").Select
+    With ActiveSheet.PivotTables("PivotTable1")
+        .PivotFields("Item").Orientation = xlRowField
+        .PivotFields("Item").Position = 1
+        .ColumnGrand = False
 
-    'Consolidate the data by creating a pivot table
-    Columns("O:Z").Delete
-
-    ActiveWorkbook.PivotCaches.Create( _
-            SourceType:=xlDatabase, _
-            SourceData:=ActiveSheet.UsedRange, _
-            Version:=xlPivotTableVersion14) _
-            .CreatePivotTable _
-            TableDestination:=Worksheets("Combined").Range("A1"), _
-            TableName:="PivotTable1", _
-            DefaultVersion:=xlPivotTableVersion14
-
-    Worksheets("Combined").Select
-    Range("A1").Select
-
-    'Setup the pivot tables fields
-    With ActiveSheet.PivotTables("PivotTable1").PivotFields("Item")
-        .Orientation = xlRowField
-        .Position = 1
-        .Subtotals = Array(False, False, False, False, False, False, False, False, False, False, False, False)
-        .LayoutForm = xlTabular
+        For i = 3 To UBound(ColHeaders, 2)
+            PivField = Format(ColHeaders(1, i), "mmm yyyy")
+            .AddDataField .PivotFields(PivField), "Sum of " & PivField, xlSum
+        Next
     End With
 
-    With ActiveSheet.PivotTables("PivotTable1").PivotFields("Description")
-        .Orientation = xlRowField
-        .Position = 2
-    End With
+    'Convert pivot table to a range
+    ActiveSheet.UsedRange.Copy
+    Range("A1").PasteSpecial xlPasteValues
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
-    On Error Resume Next
-    For i = 3 To iCols
-        With ActiveSheet.PivotTables("PivotTable1")
-            .AddDataField .PivotFields(sColHeaders(1, i)), "Sum of " & sColHeaders(1, i), xlSum
-        End With
-    Next i
-    On Error GoTo 0
+    'Fix column headers
+    Range("A1").Value = "Part Number"
+    For i = 2 To TotalCols
+        Cells(1, i).Value = Replace(Cells(1, i).Value, "Sum of ", "")
+        Cells(1, i).NumberFormat = "mmm yyyy"
+    Next
 
-    iRows = Rows(Rows.Count).End(xlUp).Row
-    iCols = Columns(Columns.Count).End(xlToLeft).Column
-
-    'Store the pivot table as values
-    Range(Cells(1, 1), Cells(iRows, iCols)).Copy
-    Range("A1").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
-    Application.CutCopyMode = False
-    Rows(iRows).Delete Shift:=xlUp
-    Range(Cells(1, 1), Cells(1, iCols)) = sColHeaders
-
-    'Match part numbers to SIM numbers
-    Columns(1).Insert Shift:=xlToRight
-    Range("A1").Value = "SIM"
-    Range("A2:A" & iRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Master!A:B,2,FALSE)=0, """", VLOOKUP(B2,Master!A:B,2,FALSE)), """")"
-    Range("A2:A" & iRows).Value = Range("A2:A" & iRows).Value
+    'Insert SIMs
+    Columns(2).Insert
+    Range("B1").Value = "SIM"
+    Range("B2:B" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Master!A:B, 2, FALSE), """")"
+    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
 End Sub
-

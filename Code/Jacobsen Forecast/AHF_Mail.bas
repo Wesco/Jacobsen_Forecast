@@ -72,7 +72,7 @@ Sub Email(SendTo As String, Optional CC As String, Optional BCC As String, Optio
 
         'Setup email
         .Subject = Subject
-        .To = SendTo
+        .to = SendTo
         .CC = CC
         .BCC = BCC
         .HTMLbody = Body
@@ -90,7 +90,7 @@ Sub Email(SendTo As String, Optional CC As String, Optional BCC As String, Optio
 
 SEND_FAILED:
     With Mail_Single
-        MsgBox "Mail to '" & .To & "' could not be sent."
+        MsgBox "Mail to '" & .to & "' could not be sent."
         .Delete
     End With
     Resume Next

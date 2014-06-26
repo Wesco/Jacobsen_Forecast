@@ -123,7 +123,10 @@ Sub FormatKitBOM()
     Rows(1).Insert
     Range("A1:D1").Value = ColHeaders
     
-    
+    'Filter kits on the forecast
+    Range("E1").Value = "On Forecast"
+    Range("E2:E" & TotalRows).Formula = "=IFERROR(IF(B2=""J"",VLOOKUP(C2,Combined!B:B,1,FALSE),""""),"""")"
+    Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
 End Sub
 
 '---------------------------------------------------------------------------------------
