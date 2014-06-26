@@ -211,6 +211,15 @@ Sub BuildFcst()
 End Sub
 
 '---------------------------------------------------------------------------------------
+' Proc : CreateKitBOM
+' Date : 6/26/2014
+' Desc : Fills out the kit bom to calculate part requirements
+'---------------------------------------------------------------------------------------
+Sub CreateKitBOM()
+    
+End Sub
+
+'---------------------------------------------------------------------------------------
 ' Proc : AddNotes
 ' Date : 1/17/2013
 ' Desc : Add previous weeks expedite notes to the forecast
