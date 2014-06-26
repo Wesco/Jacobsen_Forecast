@@ -16,6 +16,7 @@ Sub Main()
     On Error GoTo Main_Error
     ImportMaster
     ImportGaps SimsAsText:=False
+    ImportKitBOM
 
     'Import Pdc forecast
     ImportForecast FileFilter:="pdc (*.csv), pdc.csv", _
@@ -27,12 +28,10 @@ Sub Main()
                    Title:="Open the Mfg forecast", _
                    Destination:=Sheets("Mfg").Range("A1")
     On Error GoTo 0
-
-    'Restructure the data into a useable
-    'format for processing
-    RestructFcst Worksheets("Pdc")
-    RestructFcst Worksheets("Mfg")
-
+    
+    FormatFcst Worksheets("Pdc")  'Format Pdc forecast
+    FormatFcst Worksheets("Mfg")  'Format Mfg forecast
+    FormatKitBOM    'Remove unused data from kit BOM
     CombineFcst     'Consolidate data
     BuildFcst       'Process data and create a forecast
     SortByColor     'Sort the forecast by color
@@ -65,6 +64,7 @@ Sub Clean()
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Macro" Then
             s.Select
+            s.AutoFilterMode = False
             s.Cells.Delete
             s.Range("A1").Select
         End If

@@ -2,12 +2,12 @@ Attribute VB_Name = "FormatData"
 Option Explicit
 
 '---------------------------------------------------------------------------------------
-' Proc : Sub FormatFcst
+' Proc : FormatFcst
 ' Date : 6/25/2014
 ' Desc : Aggregates columns by month
-' Ex   : RestructFcst Worksheets("SheetName")
+' Ex   : FormatFcst Worksheets("SheetName")
 '---------------------------------------------------------------------------------------
-Sub RestructFcst(Source As Worksheet)
+Sub FormatFcst(Source As Worksheet)
     Dim TotalRows As Long       'Total number of rows
     Dim TotalCols As Integer    'Total number of columns
     Dim StartCol As Integer     'Months starting column
@@ -35,6 +35,7 @@ Sub RestructFcst(Source As Worksheet)
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
     ColHeaders = Range(Cells(1, 3), Cells(1, TotalCols)).Value
 
+    'Setup the first cell for processing
     Set CurrCell = Cells(1, TotalCols)
     CurrCell.Value = Replace(CurrCell.Value, "Day ", "")
     CurrCell.Value = Replace(CurrCell.Value, "Week ", "")
@@ -74,7 +75,60 @@ Sub RestructFcst(Source As Worksheet)
 End Sub
 
 '---------------------------------------------------------------------------------------
-' Proc  : Sub SortByColor
+' Proc : FormatKitBOM
+' Date : 6/26/2014
+' Desc : Removes unused data from the kit bom
+'---------------------------------------------------------------------------------------
+Sub FormatKitBOM()
+    Dim ColHeaders As Variant
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+    
+    Sheets("Kit").Select
+    TotalCols = Rows(2).Columns(Columns.Count).End(xlToLeft).Column
+    ColHeaders = Array("SIM", "Record Type", "Comp SIM", "Qty")
+    
+    'Remove report header
+    Rows("1:4").Delete
+    
+    'Remove unused columns
+    Columns("H:S").Delete
+    Columns("D:D").Delete
+    Columns("A:B").Delete
+    
+    'Add column headers
+    Rows(1).Insert
+    Range("A1:D1").Value = ColHeaders
+    
+    'Recount rows and columns
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    
+    'Convert SIMs to numbers
+    Columns(1).Insert
+    Range("A1").Value = "SIM"
+    Range("A2:A" & TotalRows).Formula = "=SUBSTITUTE(B2,""'"","""")"
+    Range("A1:A" & TotalRows).Value = Range("A1:A" & TotalRows).Value
+    Columns(2).Delete
+    
+    'Convert Comp SIMs to numbers
+    Columns(3).Insert
+    Range("C1").Value = "Comp SIM"
+    Range("C2:C" & TotalRows).Formula = "=SUBSTITUTE(D2,""'"","""")"
+    Range("C2:C" & TotalRows).Value = Range("C2:C" & TotalRows).Value
+    Columns(4).Delete
+    
+    'Remove non-component lines
+    ActiveSheet.UsedRange.AutoFilter Field:=2, Criteria1:="<>J", Criteria2:="<>I", Operator:=xlAnd
+    Cells.Delete
+    Rows(1).Insert
+    Range("A1:D1").Value = ColHeaders
+    
+    
+End Sub
+
+'---------------------------------------------------------------------------------------
+' Proc  : SortByColor
 ' Date  : 10/17/2012
 ' Desc  : Sorts the finished forecast by color to group bulk SIMs
 '---------------------------------------------------------------------------------------
