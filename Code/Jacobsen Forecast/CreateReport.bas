@@ -216,7 +216,34 @@ End Sub
 ' Desc : Fills out the kit bom to calculate part requirements
 '---------------------------------------------------------------------------------------
 Sub CreateKitBOM()
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+    Dim Addr As String
+    Dim i As Long
+    Dim j As Long
     
+    Sheets("Combined").Select
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    Range("C1:O1").Copy Destination:=Sheets("Kit").Range("E1")
+    
+    Sheets("Kit").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    
+    For j = 5 To TotalCols
+        For i = 2 To TotalRows
+            If Cells(i, 2).Value = "J" Then
+                Addr = Cells(i, j).Address(False, False)    'Address of the current KIT total
+                'vlookup KIT SIM on combined forecast to get total needed for the current month
+                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined'!B:O," & j - 2 & ",FALSE),0)"
+            Else
+                'Multiply the kit total by the number of components needed per kit
+                Cells(i, j).Formula = "=" & Addr & "*" & Cells(i, 4).Address(False, False)
+            End If
+        Next
+    Next
+    
+    Range("E2:Q" & TotalRows).Value = Range("E2:Q" & TotalRows).Value
 End Sub
 
 '---------------------------------------------------------------------------------------

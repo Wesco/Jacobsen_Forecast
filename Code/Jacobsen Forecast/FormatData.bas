@@ -149,6 +149,7 @@ Sub FormatKitBOM()
     
     Range(Cells(1, 1), Cells(TotalRows, TotalCols)).AutoFilter Field:=5, Criteria1:="=", Operator:=xlAnd
     Cells.Delete
+    Columns("E:E").Delete
     Rows(1).Insert
     Range("A1:D1").Value = ColHeaders
 End Sub
