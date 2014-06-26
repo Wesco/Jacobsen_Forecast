@@ -222,7 +222,7 @@ Sub CreateKitBOM()
     Dim i As Long
     Dim j As Long
     
-    Sheets("Combined").Select
+    Sheets("PivotTable").Select
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
     Range("C1:O1").Copy Destination:=Sheets("Kit").Range("E1")
     
@@ -235,7 +235,7 @@ Sub CreateKitBOM()
             If Cells(i, 2).Value = "J" Then
                 Addr = Cells(i, j).Address(False, False)    'Address of the current KIT total
                 'vlookup KIT SIM on combined forecast to get total needed for the current month
-                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined'!B:O," & j - 2 & ",FALSE),0)"
+                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'PivotTable'!B:O," & j - 2 & ",FALSE),0)"
             Else
                 'Multiply the kit total by the number of components needed per kit
                 Cells(i, j).Formula = "=" & Addr & "*" & Cells(i, 4).Address(False, False)

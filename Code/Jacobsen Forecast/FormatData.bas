@@ -128,7 +128,7 @@ Sub FormatKitBOM()
     
     'Filter kits on the forecast
     Range("E1").Value = "On Forecast"
-    Range("E2:E" & TotalRows).Formula = "=IFERROR(IF(B2=""J"",VLOOKUP(C2,Combined!B:B,1,FALSE),""""),"""")"
+    Range("E2:E" & TotalRows).Formula = "=IFERROR(IF(B2=""J"",VLOOKUP(C2,PivotTable!B:B,1,FALSE),""""),"""")"
     Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
     
