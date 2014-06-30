@@ -75,6 +75,9 @@ Sub MergeKitBOM()
     Dim TotalCols As Integer
     Dim TotalRows As Long
     Dim FcstRows As Long
+    Dim ColHeaders As Variant
+    Dim PivField As String
+    Dim i As Long
 
     Sheets("PivotTable").Select
     FcstRows = Rows(Rows.Count).End(xlUp).Row
@@ -90,4 +93,56 @@ Sub MergeKitBOM()
     TotalRows = Columns(2).Rows(Rows.Count).End(xlUp).Row
     Range(Cells(FcstRows + 1, 1), Cells(TotalRows, 1)).Formula = "=IFERROR(INDEX(A$2:A$" & FcstRows & ",MATCH(B" & FcstRows + 1 & ",B$2:B$" & FcstRows & ",0)),"""")"
     Range(Cells(FcstRows + 1, 1), Cells(TotalRows, 1)).Value = Range(Cells(FcstRows + 1, 1), Cells(TotalRows, 1)).Value
+
+    TotalRows = Columns(2).Rows(Rows.Count).End(xlUp).Row
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    ColHeaders = Range("A1:O1").Value
+
+    'Create pivot table
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, _
+                                      SourceData:=Range(Cells(1, 1), Cells(TotalRows, TotalCols)), _
+                                      Version:=xlPivotTableVersion14).CreatePivotTable _
+                                      TableDestination:="Combined!R1C1", _
+                                      TableName:="PivotTable1", _
+                                      DefaultVersion:=xlPivotTableVersion14
+    Sheets("Combined").Select
+    With ActiveSheet.PivotTables("PivotTable1")
+        .PivotFields("Part Number").Orientation = xlRowField
+        .PivotFields("Part Number").Position = 1
+        .PivotFields("Part Number").LayoutForm = xlTabular
+        .PivotFields("Part Number").Subtotals = Array(False, False, False, False, False, False, _
+                                                      False, False, False, False, False, False)
+
+        .PivotFields("SIM").Orientation = xlRowField
+        .PivotFields("SIM").Position = 2
+        .PivotFields("SIM").LayoutForm = xlTabular
+        .PivotFields("SIM").Subtotals = Array(False, False, False, False, False, False, _
+                                              False, False, False, False, False, False)
+        .ColumnGrand = False
+
+        For i = 3 To UBound(ColHeaders, 2)
+            PivField = Format(ColHeaders(1, i), "mmm yyyy")
+            .AddDataField .PivotFields(PivField), "Sum of " & PivField, xlSum
+        Next
+    End With
+
+    'Convert pivot table to a range
+    ActiveSheet.UsedRange.Copy
+    Range("A1").PasteSpecial xlPasteValues
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+
+    'Fix column headers
+    Range("A1").Value = "Part Number"
+    For i = 2 To TotalCols
+        Cells(1, i).Value = Replace(Cells(1, i).Value, "Sum of ", "")
+        Cells(1, i).NumberFormat = "mmm yyyy"
+    Next
+
+    'Clean up SIM and part numbers
+    For i = 2 To TotalRows
+        If Cells(i, 1).Value = "(blank)" Then Cells(i, 1).Value = ""
+        If Cells(i, 2).Value = "(blank)" Then Cells(i, 2).Value = ""
+        If Cells(i, 2).Value = "REMOVED" Then Cells(i, 2).Value = ""
+    Next
 End Sub
