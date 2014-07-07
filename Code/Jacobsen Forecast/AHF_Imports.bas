@@ -53,7 +53,7 @@ Sub ImportGaps(Optional Destination As Range, Optional SimsAsText As Boolean = T
                 Cells.Delete
             End If
 
-            Workbooks.Open Path & Name
+            OpenCsvAsText Path, Name
             ActiveSheet.UsedRange.Copy Destination:=Destination
             ActiveWorkbook.Close
 

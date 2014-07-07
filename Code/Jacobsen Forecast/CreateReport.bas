@@ -17,42 +17,44 @@ Sub BuildFcst()
     Dim rRange As Range
     Dim sCol1 As String
     Dim sCol2 As String
+
     Dim TotalRows As Long
-
-    Worksheets("Combined").Select
-    iCombinedCols = ActiveSheet.UsedRange.Columns.Count
-    iCombinedRows = ActiveSheet.UsedRange.Rows.Count
-
-    With ActiveSheet.UsedRange
-        Range(Cells(2, 1), Cells(.CurrentRegion.Rows.Count, 3)).Copy Destination:=Worksheets("Forecast").Range("A2")
-    End With
-
-    'Set column headers & number formats
-    Worksheets("Forecast").Select
-    TotalRows = ActiveSheet.UsedRange.Rows.Count
-    Range("A1:C1") = Array("SIM", "Part", "Description")
-    Range("L1").Value = "Stock Visualization"
+    Dim TotalCols As Integer
 
 
-    'Add data
-    Range("D1:K1") = Array("On Hand", "Reserve", "On Order", "BO", "WDC", "Last Cost", "UOM", "Supplier")
+    'Copy The Parts and SIMs
+    Sheets("Combined").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    Range(Cells(1, 1), Cells(TotalRows, 2)).Copy Destination:=Sheets("Forecast").Range("A1")
 
-    Range("D2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:F,3,FALSE),""0"")"
-    Range("E2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:G,4,FALSE),""0"")"
-    Range("F2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:I,6,FALSE),""0"")"
-    Range("G2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!G:H,5,FALSE),""0"")"
-    Range("H2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AJ,33,FALSE),""0"")"
-    Range("I2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AE,28,FALSE),""0"")"
-    Range("J2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AI,32,FALSE),"""")"
-    Range("K2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:AL,35,FALSE),"""")"
+    Sheets("Forecast").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
-    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(TotalRows, 4))
-    Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(TotalRows, 5))
-    Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(TotalRows, 6))
-    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(TotalRows, 7))
-    Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(TotalRows, 8))
-    Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(TotalRows, 9))
-    Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(TotalRows, 10))
+    'Set column headers
+    Range("C1:L1") = Array("Description", _
+                           "On Hand", _
+                           "Reserve", _
+                           "On Order", _
+                           "BO", _
+                           "WDC", _
+                           "Last Cost", _
+                           "UOM", _
+                           "Supplier", _
+                           "Stock Visualization")
+
+    'Add forecast data
+    Range("C2:K" & TotalRows).Formula = Array("=IFERROR(VLOOKUP(B2,Gaps!A:F,6,FALSE),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),""0"")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AJ,36,FALSE),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AM,39,FALSE),"""")")
+
+
+
     'Supplier
     Range(Cells(2, 11), Cells(TotalRows, 11)).NumberFormat = "@"
     Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(TotalRows, 11))
@@ -221,15 +223,15 @@ Sub CreateKitBOM()
     Dim Addr As String
     Dim i As Long
     Dim j As Long
-    
+
     Sheets("PivotTable").Select
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
     Range("C1:O1").Copy Destination:=Sheets("Kit").Range("E1")
-    
+
     Sheets("Kit").Select
     TotalRows = Rows(Rows.Count).End(xlUp).Row
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
-    
+
     For j = 5 To TotalCols
         For i = 2 To TotalRows
             If Cells(i, 2).Value = "J" Then
@@ -242,7 +244,7 @@ Sub CreateKitBOM()
             End If
         Next
     Next
-    
+
     Range("E2:Q" & TotalRows).Value = Range("E2:Q" & TotalRows).Value
 End Sub
 
