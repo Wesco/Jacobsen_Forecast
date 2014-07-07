@@ -134,6 +134,11 @@ Sub RestructFcst(ByVal WS As Worksheet)
     AddBulkSIM "78923693770"
     AddBulkSIM "78923693769"
     AddBulkSIM "78420498874"
+    AddBulkSIM "78923693548"
+    AddBulkSIM "78008097520"
+    AddBulkSIM "78862198844"
+    AddBulkSIM "78862198843"
+    AddBulkSIM "78862198842"
 End Sub
 
 Private Sub AddBulkSIM(ItemNum As String)
