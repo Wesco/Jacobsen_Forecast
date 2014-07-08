@@ -44,7 +44,7 @@ Sub BuildFcst()
                            "Supplier", _
                            "Stock Visualization")
 
-    'Add forecast data
+    'Add column data
     Range("C2:N" & TotalRows).Formula = Array("=IFERROR(IF(VLOOKUP(B2,Gaps!A:F,6,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:F,6,FALSE)),"""")", _
                                               "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)", _
                                               "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)", _
@@ -59,69 +59,47 @@ Sub BuildFcst()
                                               "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AM,39,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:AM,39,FALSE)),"""")")
 
     'Set text formatting
-    Range("A2:A" & TotalRows).NumberFormat = "@"
-    Range("B2:B" & TotalRows).NumberFormat = "00000000000"
-    Range("N2:N" & TotalRows).NumberFormat = "@"
-
+    Range("A2:A" & TotalRows).NumberFormat = "@"            'Part
+    Range("B2:B" & TotalRows).NumberFormat = "0000000000#"  'SIM
+    Range("N2:N" & TotalRows).NumberFormat = "@"            'Supplier
     ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
 
-    iRows = ActiveSheet.UsedRange.Rows.Count
+    'Add forecast month headers
+    Range("P1:AA1").Formula = "=PivotTable!C1"
+    Range("P1:AA1").NumberFormat = "mmm yyyy"
+    Range("P1:AA1").Value = Range("P1:AA1").Value
 
-    sCol1 = "B"
-    sCol2 = Columns(iCombinedCols).Address(False, False)
-    sCol2 = Left(sCol2, 2)
-    If Right(sCol2, 1) = ":" Then
-        sCol2 = Left(sCol2, 1)
-    End If
+    'Add forecast month data
+    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(B2,PivotTable!B:N,2,FALSE),0)"
+    Range("P2:P" & TotalRows).NumberFormat = "General"
+    Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 
-    'Autofill data
-    Range("M1").Value = Worksheets("Combined").Range("D1").Value
-    Range("M2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!D:F,3,FALSE),0)-VLOOKUP(B2,Combined!" & sCol1 & ":" & sCol2 & ",3,FALSE)"
-    Cells(2, 13).AutoFill Destination:=Range(Cells(2, 13), Cells(iRows, 13))
+    'Columns Q to AA
+    For i = 17 To 27
+        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(B2,PivotTable!B:N," & i - 14 & ",FALSE),0)"
+        Range(Cells(2, i), Cells(TotalRows, i)).Value = Range(Cells(2, i), Cells(TotalRows, i)).Value
+    Next
 
-    For i = 5 To iCombinedCols
-        Cells(1, i + 9).Value = Worksheets("Combined").Cells(i).Value
-        Cells(2, i + 9).Formula = _
-        "=" & Cells(2, i + 8).Address(False, False) & "-VLOOKUP(B2,Combined!" & sCol1 & ":" & sCol2 & "," & i - 1 & ",FALSE)"
-        Cells(2, i + 9).AutoFill Destination:=Range(Cells(2, i + 9), Cells(iRows, i + 9))
-    Next i
-
-    iCols = ActiveSheet.UsedRange.Columns.Count + 1
-    Cells(1, iCols).Value = "Notes"
-    Cells(2, iCols).Formula = "=IFERROR(IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE)),"""")"
-    Cells(2, iCols).AutoFill Destination:=Range(Cells(2, iCols), Cells(iRows, iCols))
-
-
-    With ActiveSheet.UsedRange
-        For i = 1 To .CurrentRegion.Columns.Count
-            Range(Cells(1, i), Cells(ActiveSheet.UsedRange.Rows.Count, i)).Value = _
-            Range(Cells(1, i), Cells(ActiveSheet.UsedRange.Rows.Count, i)).Value
-        Next
-    End With
-
-    'Add sparklines
-    Range("L2").Select
-    Range("L2").SparklineGroups.Add _
-            Type:=xlSparkColumn, _
-            SourceData:=Range(Cells(2, 13), Cells(2, ActiveSheet.UsedRange.Columns.Count - 1)).Address(False, False)
-
-    Selection.SparklineGroups.Item(1).Points.Negative.Visible = True
-    Selection.SparklineGroups.Item(1).SeriesColor.Color = 3289650
-    Selection.SparklineGroups.Item(1).SeriesColor.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Negative.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Negative.Color.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Markers.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Markers.Color.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Highpoint.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Highpoint.Color.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Lowpoint.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Lowpoint.Color.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Firstpoint.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Firstpoint.Color.TintAndShade = 0
-    Selection.SparklineGroups.Item(1).Points.Lastpoint.Color.Color = 208
-    Selection.SparklineGroups.Item(1).Points.Lastpoint.Color.TintAndShade = 0
-    With Range("L:L")
-        Range("L2").AutoFill Destination:=Range(Cells(2, 12), Cells(.CurrentRegion.Rows.Count, 12))
+    'Add stock visualization
+    With Range("O2:O" & TotalRows).SparklineGroups
+        .Add Type:=xlSparkColumn, SourceData:=Range("P2:AA" & TotalRows).Address(False, False)
+        With .Item(1)
+            .Points.Negative.Visible = True
+            .SeriesColor.Color = 3289650
+            .SeriesColor.TintAndShade = 0
+            .Points.Negative.Color.Color = 208
+            .Points.Negative.Color.TintAndShade = 0
+            .Points.Markers.Color.Color = 208
+            .Points.Markers.Color.TintAndShade = 0
+            .Points.Highpoint.Color.Color = 208
+            .Points.Highpoint.Color.TintAndShade = 0
+            .Points.Lowpoint.Color.Color = 208
+            .Points.Lowpoint.Color.TintAndShade = 0
+            .Points.Firstpoint.Color.Color = 208
+            .Points.Firstpoint.Color.TintAndShade = 0
+            .Points.Lastpoint.Color.Color = 208
+            .Points.Lastpoint.Color.TintAndShade = 0
+        End With
     End With
 
     Range(Cells(2, 13), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count - 1)).Select
