@@ -24,14 +24,13 @@ Sub BuildFcst()
 
     'Copy The Parts and SIMs
     Sheets("Combined").Select
-    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    TotalRows = Columns(3).Rows(Rows.Count).End(xlUp).Row
     Range(Cells(1, 1), Cells(TotalRows, 2)).Copy Destination:=Sheets("Forecast").Range("A1")
 
     Sheets("Forecast").Select
-    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
     'Set column headers
-    Range("C1:L1") = Array("Description", _
+    Range("C1:O1") = Array("Description", _
                            "On Hand", _
                            "Reserve", _
                            "On Order", _
@@ -39,27 +38,33 @@ Sub BuildFcst()
                            "WDC", _
                            "Last Cost", _
                            "UOM", _
+                           "Min/Mult", _
+                           "LT/Days", _
+                           "LT/Weeks", _
                            "Supplier", _
                            "Stock Visualization")
 
     'Add forecast data
-    Range("C2:K" & TotalRows).Formula = Array("=IFERROR(VLOOKUP(B2,Gaps!A:F,6,FALSE),"""")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),""0"")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AJ,36,FALSE),"""")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AM,39,FALSE),"""")")
+    Range("C2:N" & TotalRows).Formula = Array("=IFERROR(IF(VLOOKUP(B2,Gaps!A:F,6,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:F,6,FALSE)),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),0)", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AJ,36,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:AJ,36,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:M,12,FALSE)=0,"""",VLOOKUP(B2,Master!B:M,12,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,"""",VLOOKUP(B2,Master!B:N,13,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,"""",ROUNDUP(VLOOKUP(B2,Master!B:N,13,FALSE)/7,0)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AM,39,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:AM,39,FALSE)),"""")")
 
-
-
-    'Supplier
-    Range(Cells(2, 11), Cells(TotalRows, 11)).NumberFormat = "@"
-    Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(TotalRows, 11))
+    'Set text formatting
+    Range("A2:A" & TotalRows).NumberFormat = "@"
+    Range("B2:B" & TotalRows).NumberFormat = "00000000000"
+    Range("N2:N" & TotalRows).NumberFormat = "@"
 
     ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
+
     iRows = ActiveSheet.UsedRange.Rows.Count
 
     sCol1 = "B"
@@ -140,27 +145,6 @@ Sub BuildFcst()
                 xlSrcRange, Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)), , _
                 xlYes).Name = "Table1"
     End With
-
-    '''NOTE''''''''''''''''''''''''''''''''''''''''''''''
-    ' The formula autofills since it is part of a table '
-    '''''''''''''''''''''''''''''''''''''''''''''''''''''
-    Range("K:K").Insert Shift:=xlToRight
-    Range("K1").Value = "LT/Weeks"
-    Range("K2").Formula = "=IFERROR(VLOOKUP(B2,Master!A:N,14,FALSE)/7,"""")"
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value = _
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value
-
-    Range("K:K").Insert Shift:=xlToRight
-    Range("K1").Value = "LT/Days"
-    Range("K2").Formula = "=IFERROR(VLOOKUP(B2,Master!A:N,14,FALSE),"""")"
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value = _
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value
-
-    Range("K:K").Insert Shift:=xlToRight
-    Range("K1").Value = "Min/Mult"
-    Range("K2").Formula = "=IFERROR(VLOOKUP([@Part],Master!A:M,13,FALSE),"""")"
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value = _
-    Range(Cells(1, 11), Cells(ActiveSheet.UsedRange.Rows.Count, 11)).Value
 
     'Fix text alignment
     Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter

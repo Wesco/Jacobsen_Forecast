@@ -32,8 +32,8 @@ Sub Main()
     FormatFcst Worksheets("Pdc")  'Format Pdc forecast
     FormatFcst Worksheets("Mfg")  'Format Mfg forecast
     MergeForecast   'Consolidate data
-    FormatKitBOM    'Remove unused data from kit BOM
-    CreateKitBOM    'Creates the kit BOM using forecast data
+    FormatKitBOM    'Remove unused data from raw kit BOM
+    CreateKitBOM    'Create the kit BOM using forecast data
     MergeKitBOM     'Combine the kit BOM and forecast data
     
     BuildFcst       'Process data and create a forecast
