@@ -64,6 +64,12 @@ Sub BuildFcst()
     Range("N2:N" & TotalRows).NumberFormat = "@"            'Supplier
     ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
 
+    'Add notes from master
+    Range("AB1").Value = "Notes"
+    'Try to lookup by part number, if the part number is not found try to lookup by SIM, if both are not found, return nothing
+    Range("AB2:AB" & TotalRows).Formula = "=IFERROR(IFERROR(IF(VLOOKUP(A2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(A2,Master!A:L,12,FALSE)),IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE))),"""")"
+    Range("AB2:AB" & TotalRows).Value = Range("AB2:AB" & TotalRows).Value
+    
     'Add forecast month headers
     Range("P1:AA1").Formula = "=PivotTable!C1"
     Range("P1:AA1").NumberFormat = "mmm yyyy"
@@ -102,27 +108,19 @@ Sub BuildFcst()
         End With
     End With
 
-    Range(Cells(2, 13), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count - 1)).Select
-    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
-    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
-
-    With Selection.FormatConditions(1).Font
-        .Color = -16383844
-        .TintAndShade = 0
+    'If inventory is less than 0 highlight the cell
+    Range("P2:AA" & TotalRows).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
+    With Range("P2:AA" & TotalRows).FormatConditions(1)
+        .Font.Color = -16383844
+        .Font.TintAndShade = 0
+        .Interior.PatternColorIndex = xlAutomatic
+        .Interior.Color = 13551615
+        .Interior.TintAndShade = 0
+        .StopIfTrue = False
     End With
-    With Selection.FormatConditions(1).Interior
-        .PatternColorIndex = xlAutomatic
-        .Color = 13551615
-        .TintAndShade = 0
-    End With
-    Selection.FormatConditions(1).StopIfTrue = False
 
     'Create table
-    With Range("A:A")
-        ActiveSheet.ListObjects.Add( _
-                xlSrcRange, Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)), , _
-                xlYes).Name = "Table1"
-    End With
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range(Cells(1, 1), Cells(TotalRows, TotalCols)), , xlYes).Name = "Table1"
 
     'Fix text alignment
     Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter
