@@ -3,23 +3,13 @@ Option Explicit
 
 '---------------------------------------------------------------------------------------
 ' Proc  : Sub BuildFcst
-' Date  : 10/17/2012
+' Date  : 7/8/2014
 ' Desc  : Takes the combined forecasts and creates a final forecast sheet for use by wesco
 '---------------------------------------------------------------------------------------
 Sub BuildFcst()
-    Dim iCombinedCols As Integer
-    Dim iCombinedRows As Long
-    Dim iRows As Long
-    Dim iCols As Long
-    Dim i As Long
-    Dim Item As Object
-    Dim aArray() As Variant
-    Dim rRange As Range
-    Dim sCol1 As String
-    Dim sCol2 As String
-
     Dim TotalRows As Long
     Dim TotalCols As Integer
+    Dim i As Long
 
 
     'Copy The Parts and SIMs
@@ -69,7 +59,7 @@ Sub BuildFcst()
     'Try to lookup by part number, if the part number is not found try to lookup by SIM, if both are not found, return nothing
     Range("AB2:AB" & TotalRows).Formula = "=IFERROR(IFERROR(IF(VLOOKUP(A2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(A2,Master!A:L,12,FALSE)),IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE))),"""")"
     Range("AB2:AB" & TotalRows).Value = Range("AB2:AB" & TotalRows).Value
-    
+
     'Add forecast month headers
     Range("P1:AA1").Formula = "=PivotTable!C1"
     Range("P1:AA1").NumberFormat = "mmm yyyy"
@@ -129,47 +119,6 @@ Sub BuildFcst()
     Range(Cells(2, ActiveSheet.UsedRange.Columns.Count), _
           Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlLeft
     Cells.EntireColumn.AutoFit
-
-    Columns("G:G").Insert
-    Range("G1").Value = "Net Stock"
-    Range("G2").Formula = "=SUM(D2,F2)"
-    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(ActiveSheet.UsedRange.Rows.Count, 7))
-    With Range(Cells(2, 7), Cells(ActiveSheet.UsedRange.Rows.Count, 7))
-        .Value = .Value
-    End With
-
-    'Color bulk item SIMs
-    Set rRange = Range(Cells(1, 1), Cells(Rows(Rows.Count).End(xlUp).Row, 1))
-    aArray = Range(Cells(1, 2), Cells(Rows(Rows.Count).End(xlUp).Row, 2))
-    For i = 1 To UBound(aArray, 1)
-        If aArray(i, 1) = "4193360" Or aArray(i, 1) = "40309495373" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "10284031"
-
-        ElseIf aArray(i, 1) = "3005286" Or aArray(i, 1) = "78420420014" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "13561798"
-
-        ElseIf aArray(i, 1) = "4265710" Or aArray(i, 1) = "78923694616" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14336204"
-
-        ElseIf aArray(i, 1) = "3010331" Or aArray(i, 1) = "78420420179" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "11851260"
-
-        ElseIf aArray(i, 1) = "4187221" Or aArray(i, 1) = "78923693663" Or aArray(i, 1) = "78923693664" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "12040422"
-
-        ElseIf aArray(i, 1) = "4283654" Or aArray(i, 1) = "63285098954" Or aArray(i, 1) = "63285098955" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "15261367"
-
-        ElseIf aArray(i, 1) = "4292871" Or aArray(i, 1) = "78862198856" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "9944516"
-
-        ElseIf aArray(i, 1) = "4283892" Or aArray(i, 1) = "78923693770" Or aArray(i, 1) = "78923693769" Or aArray(i, 1) = "78420498874" Then
-            Range(rRange(i, 1), rRange(i, 15)).Interior.Color = "14994616"
-        End If
-    Next
-
-    Range("Q1:AC1").Value = Range("Q1:AC1").Value
-    Range("Q1:AC1").NumberFormat = "mmm-yyyy"
 End Sub
 
 '---------------------------------------------------------------------------------------
