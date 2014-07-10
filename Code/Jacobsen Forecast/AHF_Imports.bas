@@ -135,7 +135,7 @@ Sub ImportCsvAsText(Path As String, File As String, Destination As Range)
             .TextFilePlatform = 437
             .TextFileStartRow = 1
             .TextFileParseType = xlDelimited
-            .TextFileTextQualifier = xlTextQualifierNone
+            .TextFileTextQualifier = xlTextQualifierDoubleQuote
             .TextFileConsecutiveDelimiter = False
             .TextFileTabDelimiter = False
             .TextFileSemicolonDelimiter = False
