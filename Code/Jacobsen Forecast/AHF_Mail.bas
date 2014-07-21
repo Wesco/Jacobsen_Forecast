@@ -57,7 +57,7 @@ Sub Email(SendTo As String, Optional CC As String, Optional BCC As String, Optio
             Case "Variant()"
                 For Each Att In Attachment
                     If Att <> Empty Then
-                        If FileExists(s) = True Then
+                        If FileExists(Att) = True Then
                             Mail_Single.attachments.Add Att
                         End If
                     End If
