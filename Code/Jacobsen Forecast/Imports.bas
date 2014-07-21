@@ -118,7 +118,7 @@ Sub ImportKitBOM()
     End If
 
     Sheets("Kit").Select
-    Columns("T:T").Delete 'Remove column that contains nothing but spaces
+    Columns("T:T").Delete    'Remove column that contains nothing but spaces
     TotalCols = Rows(2).Columns(Columns.Count).End(xlToLeft).Column
 
     'Make sure the correct number of columns exist
@@ -130,6 +130,49 @@ Sub ImportKitBOM()
     For i = 1 To TotalCols
         If Not Cells(2, i).Value = ColHeaders(i - 1) Then
             Err.Raise CustErr.MODIFIEDREP, "ImportKitBOM", "Kit BOM has been modified"
+        End If
+    Next
+End Sub
+
+'---------------------------------------------------------------------------------------
+' Proc : ImportExpedite
+' Date : 7/8/2014
+' Desc : Imports previous expedite report
+'---------------------------------------------------------------------------------------
+Sub ImportExpedite()
+    Dim PrevDispAlert As Boolean
+    Dim TotalRows As Long
+    Dim TotalCols As Integer
+    Dim File As String
+    Dim Path As String
+    Dim dt As Date
+    Dim i As Integer
+
+
+    For i = 1 To 30
+        dt = Date - i
+        File = "Jacobsen Slink " & Format(dt, "m-dd-yy") & ".xlsx"
+        Path = "\\br3615gaps\gaps\Jacobsen-Textron\" & Format(dt, "yyyy") & " Alerts\"
+
+        If FileExists(Path & File) = True Then
+            Workbooks.Open Path & File
+
+            Sheets("Expedite").Select
+            ActiveSheet.AutoFilterMode = False
+            ActiveSheet.Columns.Hidden = False
+            TotalRows = Rows(Rows.Count).End(xlUp).Row
+            TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+
+            'Copy SIMs and notes
+            Range("A1:A" & TotalRows).Copy Destination:=ThisWorkbook.Sheets("PrevExp").Range("A1")
+            Range(Cells(1, TotalCols), Cells(TotalRows, TotalCols)).Copy Destination:=ThisWorkbook.Sheets("PrevExp").Range("B1")
+
+            PrevDispAlert = Application.DisplayAlerts
+            Application.DisplayAlerts = False
+            ActiveWorkbook.Saved = True
+            ActiveWorkbook.Close
+            Application.DisplayAlerts = PrevDispAlert
+            Exit For
         End If
     Next
 End Sub

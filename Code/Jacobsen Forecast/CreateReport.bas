@@ -8,7 +8,6 @@ Option Explicit
 '---------------------------------------------------------------------------------------
 Sub BuildFcst()
     Dim TotalRows As Long
-    Dim TotalCols As Integer
     Dim i As Long
 
 
@@ -60,6 +59,11 @@ Sub BuildFcst()
     Range("AB2:AB" & TotalRows).Formula = "=IFERROR(IFERROR(IF(VLOOKUP(A2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(A2,Master!A:L,12,FALSE)),IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE))),"""")"
     Range("AB2:AB" & TotalRows).Value = Range("AB2:AB" & TotalRows).Value
 
+    'Add notes from previous expedite sheet
+    Range("AC1").Value = "Expedite Notes"
+    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,PrevExp!A:B,2,FALSE)=0,"""",VLOOKUP(B2,PrevExp!A:B,2,FALSE)),"""")"
+    Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
+
     'Add forecast month headers
     Range("P1:AA1").Formula = "=PivotTable!C1"
     Range("P1:AA1").NumberFormat = "mmm yyyy"
@@ -110,15 +114,14 @@ Sub BuildFcst()
     End With
 
     'Create table
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range(Cells(1, 1), Cells(TotalRows, TotalCols)), , xlYes).Name = "Table1"
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AC" & TotalRows), , xlYes).Name = "Table1"
 
-    'Fix text alignment
-    Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlCenter
-    Range(Cells(2, 2), Cells(ActiveSheet.UsedRange.Rows.Count, 2)).HorizontalAlignment = xlCenter
-    Range(Cells(2, 4), Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count - 1)).HorizontalAlignment = xlCenter
-    Range(Cells(2, ActiveSheet.UsedRange.Columns.Count), _
-          Cells(ActiveSheet.UsedRange.Rows.Count, ActiveSheet.UsedRange.Columns.Count)).HorizontalAlignment = xlLeft
-    Cells.EntireColumn.AutoFit
+    'Set text alignment
+    Range("A1:AC1").HorizontalAlignment = xlCenter
+    Range("C2:C" & TotalRows).HorizontalAlignment = xlLeft
+    Range("D2:AA" & TotalRows).HorizontalAlignment = xlCenter
+    Range("AB2:AC" & TotalRows).HorizontalAlignment = xlLeft
+    ActiveSheet.UsedRange.Columns.AutoFit
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -155,56 +158,4 @@ Sub CreateKitBOM()
     Next
 
     Range("E2:Q" & TotalRows).Value = Range("E2:Q" & TotalRows).Value
-End Sub
-
-'---------------------------------------------------------------------------------------
-' Proc : AddNotes
-' Date : 1/17/2013
-' Desc : Add previous weeks expedite notes to the forecast
-'---------------------------------------------------------------------------------------
-Sub AddNotes()
-    Dim sPath As String
-    Dim sWkBk As String
-    Dim sYear As String
-    Dim iRows As Long
-    Dim iCols As Integer
-    Dim i As Integer
-
-    Sheets("Temp").Cells.Delete
-
-    For i = 1 To 30
-        sYear = Date - i
-        sWkBk = "Jacobsen Slink " & Format(sYear, "m-dd-yy") & ".xlsx"
-        sPath = "\\br3615gaps\gaps\Jacobsen-Textron\" & Format(sYear, "yyyy") & " Alerts\"
-
-        If FileExists(sPath & sWkBk) = True Then
-            Workbooks.Open sPath & sWkBk
-
-            Sheets("Expedite").Select
-            iRows = ActiveSheet.UsedRange.Rows.Count
-            iCols = ActiveSheet.UsedRange.Columns.Count
-
-            Range(Cells(1, 1), Cells(iRows, 1)).Copy Destination:=ThisWorkbook.Sheets("Temp").Range("A1")
-            Range(Cells(1, iCols), Cells(iRows, iCols)).Copy Destination:=ThisWorkbook.Sheets("Temp").Range("B1")
-            Application.DisplayAlerts = False
-            ActiveWorkbook.Close
-            Application.DisplayAlerts = True
-
-            Sheets("Forecast").Select
-            iRows = ActiveSheet.UsedRange.Rows.Count
-            iCols = ActiveSheet.UsedRange.Columns.Count + 1
-
-            Cells(1, iCols).Value = "Expedite Notes"
-            Cells(2, iCols).Formula = "=IFERROR(IF(VLOOKUP(A2,Temp!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Temp!A:B,2,FALSE)),"""")"
-            Cells(2, iCols).AutoFill Destination:=Range(Cells(2, iCols), Cells(iRows, iCols))
-            Range(Cells(2, iCols), Cells(iRows, iCols)).Value = Range(Cells(2, iCols), Cells(iRows, iCols)).Value
-            Columns(iCols).EntireColumn.AutoFit
-
-            Range("Q1:AC1").NumberFormat = "mmm-yyyy"
-            Range("Q1:AC1").Value = Range("Q1:AC1").Value
-            Exit For
-        End If
-    Next
-
-    Columns("G:G").Delete
 End Sub

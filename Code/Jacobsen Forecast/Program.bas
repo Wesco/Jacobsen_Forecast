@@ -17,6 +17,7 @@ Sub Main()
     ImportMaster
     ImportGaps SimsAsText:=False
     ImportKitBOM
+    ImportExpedite
 
     'Import Pdc forecast
     ImportForecast FileFilter:="pdc (*.csv), pdc.csv", _
@@ -37,8 +38,6 @@ Sub Main()
     MergeKitBOM     'Combine the kit BOM and forecast data
     
     BuildFcst       'Process data and create a forecast
-    SortByColor     'Sort the forecast by color
-    AddNotes        'Add last weeks expedite notes
     ExportFcst      'Save the forecast to the network
     MsgBox "Complete!"
     Email SendTo:="JBarnhill@wesco.com", _

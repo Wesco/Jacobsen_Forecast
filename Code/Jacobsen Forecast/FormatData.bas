@@ -125,76 +125,31 @@ Sub FormatKitBOM()
     Rows(1).Insert
     Range("A1:D1").Value = ColHeaders
     TotalRows = Rows(Rows.Count).End(xlUp).Row
-    
+
     'Filter kits on the forecast
     Range("E1").Value = "On Forecast"
     Range("E2:E" & TotalRows).Formula = "=IFERROR(IF(B2=""J"",VLOOKUP(C2,PivotTable!B:B,1,FALSE),""""),"""")"
     Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
-    
+
     ReDim Kits(1 To 1) As String
     For i = 2 To TotalRows
         If Not Cells(i, 5).Value = "" Then
             If Not Kits(1) = "" Then
                 ReDim Preserve Kits(1 To UBound(Kits) + 1) As String
             End If
-            
+
             Kits(UBound(Kits)) = Cells(i, 5).Value
         End If
-        
+
         If Cells(i, 1).Value = Kits(UBound(Kits)) Then
             Cells(i, 5).Value = Kits(UBound(Kits))
         End If
     Next
-    
+
     Range(Cells(1, 1), Cells(TotalRows, TotalCols)).AutoFilter Field:=5, Criteria1:="=", Operator:=xlAnd
     Cells.Delete
     Columns("E:E").Delete
     Rows(1).Insert
     Range("A1:D1").Value = ColHeaders
-End Sub
-
-'---------------------------------------------------------------------------------------
-' Proc  : SortByColor
-' Date  : 10/17/2012
-' Desc  : Sorts the finished forecast by color to group bulk SIMs
-'---------------------------------------------------------------------------------------
-Sub SortByColor()
-    Dim vCell As Variant
-    Dim TotalRows As Long
-    Dim PrevSheet As Worksheet
-
-    Set PrevSheet = ActiveSheet
-    Sheets("Forecast").Select
-    TotalRows = ActiveSheet.UsedRange.Rows.Count
-
-    With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort.SortFields
-        .Clear
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(255, 235, 156)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(204, 192, 218)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(198, 239, 206)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(183, 222, 232)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(230, 184, 183)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(252, 213, 180)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(196, 189, 151)
-        .Add(Range("Table1[SIM]"), xlSortOnCellColor, xlAscending, , xlSortNormal).SortOnValue.Color = RGB(184, 204, 228)
-        .Add Key:=Range("Table1[LT/Days]"), SortOn:=xlSortOnValues, Order:=xlDescending, DataOption:=xlSortNormal
-    End With
-    With ActiveWorkbook.Worksheets("Forecast").ListObjects("Table1").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    For Each vCell In Range(Cells(2, 1), Cells(TotalRows, 1))
-        If vCell.Value = "99923698005" Or vCell.Value = "99923698006" Or _
-           vCell.Value = "99923697662" Or vCell.Value = "99420498967" Then
-            Rows(vCell.Row).Cut
-            Rows(vCell.Offset(-1).Row).Insert Shift:=xlDown
-        End If
-    Next
-
-    PrevSheet.Select
 End Sub
