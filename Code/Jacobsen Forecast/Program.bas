@@ -35,9 +35,9 @@ Sub Main()
     MergeForecast   'Consolidate data
     FormatKitBOM    'Remove unused data from raw kit BOM
     CreateKitBOM    'Create the kit BOM using forecast data
-    MergeKitBOM     'Combine the kit BOM and forecast data
     
-    BuildFcst       'Process data and create a forecast
+    BuildKitFcst    'Create a kit forecast
+    BuildFcst       'Create a forecast
     ExportFcst      'Save the forecast to the network
     MsgBox "Complete!"
     Email SendTo:="JBarnhill@wesco.com", _

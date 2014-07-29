@@ -125,6 +125,59 @@ Sub BuildFcst()
 End Sub
 
 '---------------------------------------------------------------------------------------
+' Proc : BuildKitFcst
+' Date : 7/29/2014
+' Desc : Creates a forecast using data from the kit bom
+'---------------------------------------------------------------------------------------
+Sub BuildKitFcst()
+    Dim TotalRows As Long
+    Dim TotalCols As Integer
+    Dim i As Long
+    Dim j As Integer
+
+    Sheets("Kit").Select
+    TotalRows = ActiveSheet.UsedRange.Rows.Count
+    TotalCols = ActiveSheet.UsedRange.Columns.Count
+
+    For i = 2 To TotalRows
+        Cells(i, 5).Formula = "=IFERROR(VLOOKUP(C" & i & ",Gaps!A:G,7,FALSE),0)-" & Cells(i, 5).Value
+        Cells(i, 5).Value = Cells(i, 5).Value
+    Next
+
+    For i = 2 To TotalRows
+        For j = 6 To TotalCols
+            Cells(i, j).Formula = Cells(i, j - 1).Value - Cells(i, j).Value
+        Next
+    Next
+
+    Range("D:D").Delete
+    Range("A:B").Delete
+    Range("B:C").Insert
+    Range("A1").Value = "SIM"
+
+    Range("B1:N1").Value = Array("Part", _
+                                 "OH", _
+                                 "Reserve", _
+                                 "On Order", _
+                                 "BO", _
+                                 "WDC", _
+                                 "Last Cost", _
+                                 "UOM", _
+                                 "Min/Mult", _
+                                 "LT/Days", _
+                                 "LT/Weeks", _
+                                 "Supplier", _
+                                 "Stock Visualization")
+
+    Range("B2:B" & TotalRows).Formula = "=IFERROR(INDEX(Master!A:A,MATCH(A2,Master!B:B,0)),"""")"
+    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
+
+    Range("C2:C" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2,Gaps!A:G,7,FALSE),0)"
+    Range("C2:C" & TotalRows).Value = Range("C2:C" & TotalRows).Value
+
+End Sub
+
+'---------------------------------------------------------------------------------------
 ' Proc : CreateKitBOM
 ' Date : 6/26/2014
 ' Desc : Fills out the kit bom to calculate part requirements
