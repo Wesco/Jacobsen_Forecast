@@ -29,13 +29,13 @@ Sub Main()
                    Title:="Open the Mfg forecast", _
                    Destination:=Sheets("Mfg").Range("A1")
     On Error GoTo 0
-    
+
     FormatFcst Worksheets("Pdc")  'Format Pdc forecast
     FormatFcst Worksheets("Mfg")  'Format Mfg forecast
     MergeForecast   'Consolidate data
     FormatKitBOM    'Remove unused data from raw kit BOM
     CreateKitBOM    'Create the kit BOM using forecast data
-    
+
     BuildKitFcst    'Create a kit forecast
     BuildFcst       'Create a forecast
     ExportFcst      'Save the forecast to the network
@@ -62,6 +62,7 @@ Sub Clean()
 
     PrevDispAlert = Application.DisplayAlerts
     Application.DisplayAlerts = False
+    ThisWorkbook.Activate
 
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Macro" Then

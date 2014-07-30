@@ -61,22 +61,22 @@ Sub BuildFcst()
 
     'Add notes from previous expedite sheet
     Range("AC1").Value = "Expedite Notes"
-    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,PrevExp!A:B,2,FALSE)=0,"""",VLOOKUP(B2,PrevExp!A:B,2,FALSE)),"""")"
+    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(B2,Expedite!A:B,2,FALSE)),"""")"
     Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
 
     'Add forecast month headers
-    Range("P1:AA1").Formula = "=PivotTable!C1"
+    Range("P1:AA1").Formula = "=Combined!C1"
     Range("P1:AA1").NumberFormat = "mmm yyyy"
     Range("P1:AA1").Value = Range("P1:AA1").Value
 
     'Add forecast month data
-    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(B2,PivotTable!B:N,2,FALSE),0)"
+    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(B2,Combined!B:N,2,FALSE),0)"
     Range("P2:P" & TotalRows).NumberFormat = "General"
     Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 
     'Columns Q to AA
     For i = 17 To 27
-        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(B2,PivotTable!B:N," & i - 14 & ",FALSE),0)"
+        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(B2,Combined!B:N," & i - 14 & ",FALSE),0)"
         Range(Cells(2, i), Cells(TotalRows, i)).Value = Range(Cells(2, i), Cells(TotalRows, i)).Value
     Next
 
@@ -250,7 +250,7 @@ Sub CreateKitBOM()
     Dim i As Long
     Dim j As Long
 
-    Sheets("PivotTable").Select
+    Sheets("Combined").Select
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
     Range("C1:O1").Copy Destination:=Sheets("Kit").Range("E1")
 
@@ -263,7 +263,7 @@ Sub CreateKitBOM()
             If Cells(i, 2).Value = "J" Then
                 Addr = Cells(i, j).Address(False, False)    'Address of the current KIT total
                 'vlookup KIT SIM on combined forecast to get total needed for the current month
-                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'PivotTable'!B:O," & j - 2 & ",FALSE),0)"
+                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined'!B:O," & j - 2 & ",FALSE),0)"
             Else
                 'Multiply the kit total by the number of components needed per kit
                 Cells(i, j).Formula = "=" & Addr & "*" & Cells(i, 4).Address(False, False)

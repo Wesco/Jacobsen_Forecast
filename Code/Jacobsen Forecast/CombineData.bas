@@ -31,10 +31,10 @@ Sub MergeForecast()
     ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, _
                                       SourceData:=Range(Cells(1, 1), Cells(TotalRows, TotalCols)), _
                                       Version:=xlPivotTableVersion14).CreatePivotTable _
-                                      TableDestination:="PivotTable!R1C1", _
+                                      TableDestination:="Combined!R1C1", _
                                       TableName:="PivotTable1", _
                                       DefaultVersion:=xlPivotTableVersion14
-    Sheets("PivotTable").Select
+    Sheets("Combined").Select
     With ActiveSheet.PivotTables("PivotTable1")
         .PivotFields("Item").Orientation = xlRowField
         .PivotFields("Item").Position = 1

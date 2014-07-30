@@ -164,8 +164,8 @@ Sub ImportExpedite()
             TotalCols = Columns(Columns.Count).End(xlToLeft).Column
 
             'Copy SIMs and notes
-            Range("A1:A" & TotalRows).Copy Destination:=ThisWorkbook.Sheets("PrevExp").Range("A1")
-            Range(Cells(1, TotalCols), Cells(TotalRows, TotalCols)).Copy Destination:=ThisWorkbook.Sheets("PrevExp").Range("B1")
+            Range("A1:A" & TotalRows).Copy Destination:=ThisWorkbook.Sheets("Expedite").Range("A1")
+            Range(Cells(1, TotalCols), Cells(TotalRows, TotalCols)).Copy Destination:=ThisWorkbook.Sheets("Expedite").Range("B1")
 
             PrevDispAlert = Application.DisplayAlerts
             Application.DisplayAlerts = False
