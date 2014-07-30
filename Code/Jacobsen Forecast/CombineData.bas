@@ -60,8 +60,8 @@ Sub MergeForecast()
     Next
 
     'Insert SIMs
-    Columns(2).Insert
-    Range("B1").Value = "SIM"
-    Range("B2:B" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Master!A:B, 2, FALSE), """")"
-    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
+    Columns(1).Insert
+    Range("A1").Value = "SIM"
+    Range("A2:A" & TotalRows).Formula = "=IFERROR(VLOOKUP(B2, Master!A:B, 2, FALSE), """")"
+    Range("A2:A" & TotalRows).Value = Range("A2:A" & TotalRows).Value
 End Sub

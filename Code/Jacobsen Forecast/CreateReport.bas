@@ -34,34 +34,35 @@ Sub BuildFcst()
                            "Stock Visualization")
 
     'Add column data
-    Range("C2:N" & TotalRows).Formula = Array("=IFERROR(IF(VLOOKUP(B2,Gaps!A:F,6,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:F,6,FALSE)),"""")", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),0)", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),0)", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),0)", _
-                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),0)", _
-                                              "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AJ,36,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:AJ,36,FALSE)),"""")", _
-                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:M,12,FALSE)=0,"""",VLOOKUP(B2,Master!B:M,12,FALSE)),"""")", _
-                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,"""",VLOOKUP(B2,Master!B:N,13,FALSE)),"""")", _
-                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,"""",ROUNDUP(VLOOKUP(B2,Master!B:N,13,FALSE)/7,0)),"""")", _
-                                              "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AM,39,FALSE)=0,"""",VLOOKUP(B2,Gaps!A:AM,39,FALSE)),"""")")
+    Range("C2:N" & TotalRows).Formula = Array("=IFERROR(IF(VLOOKUP(A2,Gaps!A:F,6,FALSE)=0,"""",VLOOKUP(A2,Gaps!A:F,6,FALSE)),"""")", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:G,7,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:H,8,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:J,10,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:I,9,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:AK,37,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(A2,Gaps!A:AF,32,FALSE),0)", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Gaps!A:AJ,36,FALSE)=0,"""",VLOOKUP(A2,Gaps!A:AJ,36,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Master!B:M,12,FALSE)=0,"""",VLOOKUP(A2,Master!B:M,12,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Master!B:N,13,FALSE)=0,"""",VLOOKUP(A2,Master!B:N,13,FALSE)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Master!B:N,13,FALSE)=0,"""",ROUNDUP(VLOOKUP(A2,Master!B:N,13,FALSE)/7,0)),"""")", _
+                                              "=IFERROR(IF(VLOOKUP(A2,Gaps!A:AM,39,FALSE)=0,"""",VLOOKUP(A2,Gaps!A:AM,39,FALSE)),"""")")
 
     'Set text formatting
-    Range("A2:A" & TotalRows).NumberFormat = "@"            'Part
-    Range("B2:B" & TotalRows).NumberFormat = "0000000000#"  'SIM
+    Range("A2:A" & TotalRows).NumberFormat = "0000000000#"  'SIM
+    Range("B2:B" & TotalRows).NumberFormat = "@"            'Part
     Range("N2:N" & TotalRows).NumberFormat = "@"            'Supplier
     ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
 
     'Add notes from master
     Range("AB1").Value = "Notes"
+
     'Try to lookup by part number, if the part number is not found try to lookup by SIM, if both are not found, return nothing
-    Range("AB2:AB" & TotalRows).Formula = "=IFERROR(IFERROR(IF(VLOOKUP(A2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(A2,Master!A:L,12,FALSE)),IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE))),"""")"
+    Range("AB2:AB" & TotalRows).Formula = "=IFERROR(IFERROR(IF(VLOOKUP(B2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(B2,Master!A:L,12,FALSE)),IF(VLOOKUP(A2,Master!A:L,12,FALSE)=0,"""",VLOOKUP(A2,Master!A:L,12,FALSE))),"""")"
     Range("AB2:AB" & TotalRows).Value = Range("AB2:AB" & TotalRows).Value
 
     'Add notes from previous expedite sheet
     Range("AC1").Value = "Expedite Notes"
-    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(B2,Expedite!A:B,2,FALSE)),"""")"
+    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Expedite!A:B,2,FALSE)),"""")"
     Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
 
     'Add forecast month headers
@@ -70,13 +71,13 @@ Sub BuildFcst()
     Range("P1:AA1").Value = Range("P1:AA1").Value
 
     'Add forecast month data
-    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(B2,Combined!B:N,2,FALSE),0)"
+    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(A2,Combined!A:N,3,FALSE),0)"
     Range("P2:P" & TotalRows).NumberFormat = "General"
     Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 
     'Columns Q to AA
     For i = 17 To 27
-        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(B2,Combined!B:N," & i - 14 & ",FALSE),0)"
+        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(A2,Combined!A:N," & i - 13 & ",FALSE),0)"
         Range(Cells(2, i), Cells(TotalRows, i)).Value = Range(Cells(2, i), Cells(TotalRows, i)).Value
     Next
 
@@ -115,6 +116,7 @@ Sub BuildFcst()
 
     'Create table
     ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AC" & TotalRows), , xlYes).Name = "Table1"
+    ActiveSheet.ListObjects(1).Unlist
 
     'Set text alignment
     Range("A1:AC1").HorizontalAlignment = xlCenter
@@ -161,6 +163,7 @@ Sub BuildKitFcst()
     Range("A1").Value = "Type"
     Range("B1").Value = "SIM"
 
+    'Set column headers
     Range("C1:O1").Value = Array("Part", _
                                  "OH", _
                                  "OR", _
@@ -212,6 +215,11 @@ Sub BuildKitFcst()
         End With
     End With
 
+    'Add expedite notes
+    Range("AC1").Value = "Expedite Notes"
+    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Expedite!A:B,2,FALSE)),"""")"
+    Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
+
     'If inventory is less than 0 highlight the cell
     Range("P2:AB" & TotalRows).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
     With Range("P2:AB" & TotalRows).FormatConditions(1)
@@ -233,7 +241,7 @@ Sub BuildKitFcst()
     Range("I2:I" & TotalRows).HorizontalAlignment = xlLeft
 
     'Create table
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AB" & TotalRows), , xlYes).Name = "Table1"
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AC" & TotalRows), , xlYes).Name = "Table1"
     ActiveSheet.ListObjects(1).Unlist
     ActiveSheet.UsedRange.Columns.AutoFit
 End Sub
@@ -262,8 +270,8 @@ Sub CreateKitBOM()
         For i = 2 To TotalRows
             If Cells(i, 2).Value = "J" Then
                 Addr = Cells(i, j).Address(False, False)    'Address of the current KIT total
-                'vlookup KIT SIM on combined forecast to get total needed for the current month
-                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined'!B:O," & j - 2 & ",FALSE),0)"
+                'Vlookup KIT SIM on combined forecast to get total needed for the current month
+                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined'!A:O," & j - 2 & ",FALSE),0)"
             Else
                 'Multiply the kit total by the number of components needed per kit
                 Cells(i, j).Formula = "=" & Addr & "*" & Cells(i, 4).Address(False, False)
