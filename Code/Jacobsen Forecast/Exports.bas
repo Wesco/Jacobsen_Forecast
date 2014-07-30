@@ -20,6 +20,7 @@ Sub ExportFcst()
     End If
 
     Sheets("Forecast").Copy
+    ThisWorkbook.Sheets("Kit").Copy After:=Sheets.Count
     Sheets.Add After:=Sheets(Sheets.Count), Count:=2
     Sheets("Sheet2").Name = "Order"
     Sheets("Sheet3").Name = "Expedite"

@@ -140,41 +140,102 @@ Sub BuildKitFcst()
     TotalCols = ActiveSheet.UsedRange.Columns.Count
 
     For i = 2 To TotalRows
+        'Calculate the first month
         Cells(i, 5).Formula = "=IFERROR(VLOOKUP(C" & i & ",Gaps!A:G,7,FALSE),0)-" & Cells(i, 5).Value
         Cells(i, 5).Value = Cells(i, 5).Value
-    Next
 
-    For i = 2 To TotalRows
+        'Calculate the remaining months
         For j = 6 To TotalCols
             Cells(i, j).Formula = Cells(i, j - 1).Value - Cells(i, j).Value
         Next
+
+        'Convert J/I lines to K(it)/C(omponent)
+        If Cells(i, 2).Value = "J" Then Cells(i, 2).Value = "K"
+        If Cells(i, 2).Value = "I" Then Cells(i, 2).Value = "C"
     Next
 
     Range("D:D").Delete
-    Range("A:B").Delete
-    Range("B:C").Insert
-    Range("A1").Value = "SIM"
+    Range("A:A").Delete
+    Range("C:O").Insert
 
-    Range("B1:N1").Value = Array("Part", _
+    Range("A1").Value = "Type"
+    Range("B1").Value = "SIM"
+
+    Range("C1:O1").Value = Array("Part", _
                                  "OH", _
-                                 "Reserve", _
-                                 "On Order", _
+                                 "OR", _
+                                 "OO", _
                                  "BO", _
                                  "WDC", _
-                                 "Last Cost", _
+                                 "LC", _
                                  "UOM", _
                                  "Min/Mult", _
                                  "LT/Days", _
                                  "LT/Weeks", _
-                                 "Supplier", _
+                                 "Sup", _
                                  "Stock Visualization")
 
-    Range("B2:B" & TotalRows).Formula = "=IFERROR(INDEX(Master!A:A,MATCH(A2,Master!B:B,0)),"""")"
-    Range("B2:B" & TotalRows).Value = Range("B2:B" & TotalRows).Value
+    Range("C2:N" & TotalRows).Formula = Array("=IFERROR(IF(INDEX(Master!A:A,MATCH(B2,Master!B:B,0))=B2,"""",INDEX(Master!A:A,MATCH(B2,Master!B:B,0))),"""")", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:G,7,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:H,8,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:J,10,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:I,9,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AK,37,FALSE),0)", _
+                                              "=IFERROR(VLOOKUP(B2,Gaps!A:AF,32,FALSE),""-"")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Gaps!A:AJ,36,FALSE)=0,""-"",VLOOKUP(B2,Gaps!A:AJ,36,FALSE)),""-"")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:M,12,FALSE)=0,""-"",VLOOKUP(B2,Master!B:M,12,FALSE)),""-"")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,""-"",VLOOKUP(B2,Master!B:N,13,FALSE)),""-"")", _
+                                              "=IFERROR(IF(VLOOKUP(B2,Master!B:N,13,FALSE)=0,""-"",ROUNDUP(VLOOKUP(B2,Master!B:N,13,FALSE)/7,0)),""-"")", _
+                                              "=IFERROR(""=""&""""""""&VLOOKUP(B2,Gaps!A:AM,39,FALSE)&"""""""",""-"")")
 
-    Range("C2:C" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2,Gaps!A:G,7,FALSE),0)"
-    Range("C2:C" & TotalRows).Value = Range("C2:C" & TotalRows).Value
+    Range("C2:N" & TotalRows).Value = Range("C2:N" & TotalRows).Value
 
+    'Add stock visualization
+    With Range("O2:O" & TotalRows).SparklineGroups
+        .Add Type:=xlSparkColumn, SourceData:=Range("P2:AB" & TotalRows).Address(False, False)
+        With .Item(1)
+            .Points.Negative.Visible = True
+            .SeriesColor.Color = 3289650
+            .SeriesColor.TintAndShade = 0
+            .Points.Negative.Color.Color = 208
+            .Points.Negative.Color.TintAndShade = 0
+            .Points.Markers.Color.Color = 208
+            .Points.Markers.Color.TintAndShade = 0
+            .Points.Highpoint.Color.Color = 208
+            .Points.Highpoint.Color.TintAndShade = 0
+            .Points.Lowpoint.Color.Color = 208
+            .Points.Lowpoint.Color.TintAndShade = 0
+            .Points.Firstpoint.Color.Color = 208
+            .Points.Firstpoint.Color.TintAndShade = 0
+            .Points.Lastpoint.Color.Color = 208
+            .Points.Lastpoint.Color.TintAndShade = 0
+        End With
+    End With
+
+    'If inventory is less than 0 highlight the cell
+    Range("P2:AB" & TotalRows).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
+    With Range("P2:AB" & TotalRows).FormatConditions(1)
+        .Font.Color = -16383844
+        .Font.TintAndShade = 0
+        .Interior.PatternColorIndex = xlAutomatic
+        .Interior.Color = 13551615
+        .Interior.TintAndShade = 0
+        .StopIfTrue = False
+    End With
+
+    'Set number formats
+    Range("I2:I" & TotalRows).NumberFormat = "0.00"
+
+    'Set text alignment
+    Range("A1:AB1").HorizontalAlignment = xlCenter
+    Range("C2:C" & TotalRows).HorizontalAlignment = xlLeft
+    Range("D2:AB" & TotalRows).HorizontalAlignment = xlCenter
+    Range("I2:I" & TotalRows).HorizontalAlignment = xlLeft
+
+    'Create table
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AB" & TotalRows), , xlYes).Name = "Table1"
+    ActiveSheet.ListObjects(1).Unlist
+    ActiveSheet.UsedRange.Columns.AutoFit
 End Sub
 
 '---------------------------------------------------------------------------------------
