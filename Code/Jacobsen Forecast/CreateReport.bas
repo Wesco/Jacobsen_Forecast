@@ -113,6 +113,9 @@ Sub BuildFcst()
         .Interior.TintAndShade = 0
         .StopIfTrue = False
     End With
+    
+    'Sort by lead time
+    ActiveSheet.UsedRange.Sort Range("L1:L" & TotalRows), xlDescending, Header:=xlYes
 
     'Create table
     ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AC" & TotalRows), , xlYes).Name = "Table1"
