@@ -1,4 +1,4 @@
-Attribute VB_Name = "MergeData"
+Attribute VB_Name = "CombineData"
 Option Explicit
 
 '---------------------------------------------------------------------------------------
