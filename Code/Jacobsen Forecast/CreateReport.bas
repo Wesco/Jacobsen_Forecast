@@ -71,13 +71,13 @@ Sub BuildFcst()
     Range("P1:AA1").Value = Range("P1:AA1").Value
 
     'Add forecast month data
-    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(A2,Combined!A:N,3,FALSE),0)"
+    Range("P2:P" & TotalRows).Formula = "=D2-IFERROR(VLOOKUP(B2,Combined!B:N,2,FALSE),0)"
     Range("P2:P" & TotalRows).NumberFormat = "General"
     Range("P2:P" & TotalRows).Value = Range("P2:P" & TotalRows).Value
 
     'Columns Q to AA
     For i = 17 To 27
-        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(A2,Combined!A:N," & i - 13 & ",FALSE),0)"
+        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-IFERROR(VLOOKUP(B2,Combined!B:N," & i - 14 & ",FALSE),0)"
         Range(Cells(2, i), Cells(TotalRows, i)).Value = Range(Cells(2, i), Cells(TotalRows, i)).Value
     Next
 
