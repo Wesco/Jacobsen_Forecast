@@ -217,11 +217,16 @@ Sub BuildKitFcst()
             .Points.Lastpoint.Color.TintAndShade = 0
         End With
     End With
+    
+    'Add master notes
+    Range("AC1").Value = "Notes"
+    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Master!B:L,11,FALSE)=0,"""",VLOOKUP(B2,Master!B:L,11,FALSE)),"""")"
+    Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
 
     'Add expedite notes
-    Range("AC1").Value = "Expedite Notes"
-    Range("AC2:AC" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(A2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(A2,Expedite!A:B,2,FALSE)),"""")"
-    Range("AC2:AC" & TotalRows).Value = Range("AC2:AC" & TotalRows).Value
+    Range("AD1").Value = "Expedite Notes"
+    Range("AD2:AD" & TotalRows).Formula = "=IFERROR(IF(VLOOKUP(B2,Expedite!A:B,2,FALSE)=0,"""",VLOOKUP(B2,Expedite!A:B,2,FALSE)),"""")"
+    Range("AD2:AD" & TotalRows).Value = Range("AD2:AD" & TotalRows).Value
 
     'If inventory is less than 0 highlight the cell
     Range("P2:AB" & TotalRows).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
@@ -244,7 +249,7 @@ Sub BuildKitFcst()
     Range("I2:I" & TotalRows).HorizontalAlignment = xlLeft
 
     'Create table
-    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AC" & TotalRows), , xlYes).Name = "Table1"
+    ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:AD" & TotalRows), , xlYes).Name = "Table1"
     ActiveSheet.ListObjects(1).Unlist
     ActiveSheet.UsedRange.Columns.AutoFit
 End Sub
