@@ -39,8 +39,7 @@ Sub Main()
     BuildKitFcst    'Create a kit forecast
     BuildFcst       'Create a forecast
     ExportFcst      'Save the forecast to the network
-    Email SendTo:="JBarnhill@wesco.com", _
-          CC:="ACoffey@wesco.com", _
+    Email SendTo:="ACoffey@wesco.com", _
           Subject:="Jacobsen Forecast", _
           Body:="""\\br3615gaps\gaps\Jacobsen-Textron\" & Format(Date, "yyyy") & " Alerts\Jacobsen Slink " & Format(Date, "m-dd-yy") & ".xlsx"""
     MsgBox "Complete!"
